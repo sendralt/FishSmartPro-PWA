@@ -889,7 +889,6 @@
         .mt-20 {
             margin-top: 20px;
         }
-§§include(/tmp/sub_css.txt)
     
         /* ============================================
            SUBSCRIPTION & PREMIUM STYLES
@@ -1261,7 +1260,6 @@
         // ============================================
 
         // Application State
-§§include(/tmp/sub_js.txt)
         
         /* ============================================
            GOOGLE PLAY BILLING & SUBSCRIPTION LOGIC
@@ -1333,8 +1331,9 @@
             console.log('💎 Pro Mode Activated');
         }
 
-        const state = {
-            chart: null,
+                const state = {
+            forecastInstance: null,
+            activityInstance: null,
             isGenerating: false
         };
 
@@ -1575,9 +1574,29 @@
         }
 
         
+        
+        /* ============================================
+           CHART & DATA VISUALIZATION (V9-FINAL)
+           ============================================ */
+
+        
+        /* ============================================
+           CHART & DATA VISUALIZATION (V9-STABLE)
+           ============================================ */
+
+        
+        /* ============================================
+           CHART & DATA VISUALIZATION (V9-FINAL-STABLE)
+           ============================================ */
+
+        
+        /* ============================================
+           V9 VISUALIZATION ENGINE (DUAL-AXIS STABLE)
+           ============================================ */
+
         function updateForecastChart(forecast) {
-            const canvas = elements.forecastChart;
-            if (!canvas) return;
+            const canvas = document.getElementById('forecastChart');
+            if (!canvas || !forecast) return;
             const ctx = canvas.getContext('2d');
 
             const labels = forecast.map(f => {
@@ -1627,7 +1646,7 @@
                             ticks: { color: '#ff9d00' }
                         },
                         y1: {
-                            type: 'linear', display: true, position: 'right',
+                            type: 'linear', display: true, position: 'right', 
                             title: { display: true, text: 'Pressure (hPa)', color: '#00d4ff' },
                             grid: { drawOnChartArea: false },
                             ticks: { color: '#00d4ff' }
@@ -1641,55 +1660,60 @@
             });
         }
 
-            state.chart = new Chart(ctx, {
+        function renderActivityChart(dataPoints) {
+            const canvas = document.getElementById('activityChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            if (state.activityInstance) {
+                state.activityInstance.destroy();
+            }
+
+            const labels = [];
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const hour = (now.getHours() + i) % 24;
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                labels.push(`${hour12} ${ampm}`);
+            }
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
+            gradient.addColorStop(1, 'rgba(0, 212, 255, 0.0)');
+
+            state.activityInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Temp (°F)',
-                        data: temps,
-                        borderColor: '#ff9d00',
-                        backgroundColor: 'rgba(255, 157, 0, 0.1)',
-                        borderWidth: 2,
-                        yAxisID: 'y',
-                        tension: 0.4
-                    }, {
-                        label: 'Pressure (hPa)',
-                        data: pressures,
+                        label: 'Activity Level',
+                        data: Array.isArray(dataPoints) ? dataPoints : [6, 8, 9, 10, 8, 7, 5, 4, 3, 4, 6, 8],
                         borderColor: '#00d4ff',
-                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                        borderWidth: 2,
-                        yAxisID: 'y1',
-                        tension: 0.4
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#00ff9d',
+                        pointBorderColor: '#00d4ff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            type: 'linear',
-                            display: true,
-                            position: 'left',
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#888' }
-                        },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            grid: { drawOnChartArea: false },
-                            ticks: { color: '#888' }
-                        }
-                    },
+                    maintainAspectRatio: true,
                     plugins: {
-                        legend: { labels: { color: '#fff' } }
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0aec0' } },
+                        y: { beginAtZero: true, max: 10, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0aec0', stepSize: 2 } }
                     }
                 }
             });
         }
-
-                
 
         function updateDashboard(data) {
             console.log('📊 V9-DUAL-AXIS-ACTIVE Updating Dashboard:', data);
@@ -1700,10 +1724,8 @@
             const scoreLabel = document.querySelector(".bg-blue-600 .text-xs.font-bold");
             if (scoreLabel) scoreLabel.textContent = prob + "% Probability";
             // 2. Update 12-hour forecast chart
-            if (data.forecast_12h) {
-                updateForecastChart(data.forecast_12h);
-                if (data.activity_levels) renderActivityChart(data.activity_levels);
-            }
+            if (data.forecast_12h) updateForecastChart(data.forecast_12h);
+            if (data.activity_levels || data.activity) renderActivityChart(data.activity_levels || data.activity);
 
             // 3. Update weather
             if (data.weather) {
@@ -1755,17 +1777,7 @@
             return '🌙';
         }
 
-        // ============================================
-        // CHART RENDERING
-        // ============================================
-
-        function renderActivityChart(dataPoints) {
-            const ctx = elements.activityChart.getContext('2d');
-            
-            if (state.chart) {
-                state.chart.destroy();
-            }
-
+        
             // Generate labels for next 12 hours
             const labels = [];
             const now = new Date();
