@@ -892,7 +892,7 @@
     </style>
 
     <!-- PWA Meta Tags -->
-    <link rel="manifest" href="/manifest.json?v=5">
+    <link rel="manifest" href="/manifest.json?v=99">
     <meta name="theme-color" content="#0a0e27">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -1418,7 +1418,7 @@
                 
 
         function updateDashboard(data) {
-            console.log('📊 AZ-V9-DUAL-AXIS-FIX Updating Dashboard:', data);
+            console.log('📊 V9-DUAL-AXIS-ACTIVE Updating Dashboard:', data);
             const rank = data.bite_rank || "Fair";
             const prob = data.bite_probability || 50;
             const biteElem = document.getElementById("biteProbability");
@@ -1449,8 +1449,7 @@
                 if (elements.solunarAssessment) elements.solunarAssessment.textContent = data.solunar.assessment;
             }
 
-            if (data.activity && typeof renderActivityChart === 'function') {
-                renderActivityChart(data.activity);
+            
             }
         }
 
@@ -1616,7 +1615,7 @@
         // Register Service Worker for PWA
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=5')
+                navigator.serviceWorker.register('/sw_v9.js?v=99')
                     .then(reg => console.log('🚀 Service Worker registered:', reg.scope))
                     .catch(err => console.error('❌ Service Worker registration failed:', err));
             });
