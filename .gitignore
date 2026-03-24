@@ -1,3 +1,4 @@
 node_modules
 package-lock.json
 .env
+.gradle/\nbuild/\napp/build/\n*.apk\n*.aab\n*.idsig\n*.keystore\nnode_modules/\n.env\nserver.log
