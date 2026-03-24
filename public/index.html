@@ -1382,6 +1382,13 @@
             setInterval(updateSystemTime, 1000);
             setupEventListeners();
             initBilling();
+            // Google Reviewer Bypass
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('reviewer') === 'true') {
+                console.log('\ud83d\udee1️ Reviewer Mode Activated');
+                activateProMode();
+            }
+
             if (billingState.isPro) activateProMode();
             console.log('🎣 FishSmart Pro initialized');
         }
