@@ -24,18 +24,18 @@
   ],
   "screenshots": [
     {
-      "src": "/icon.png",
-      "sizes": "512x512",
+      "src": "/screenshots/screenshot_mobile.png",
+      "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "FishSmart Pro Dashboard"
+      "label": "FishSmart Pro Mobile Dashboard"
     },
     {
-      "src": "/icon.png",
-      "sizes": "512x512",
+      "src": "/screenshots/screenshot_desktop.png",
+      "sizes": "1280x800",
       "type": "image/png",
       "form_factor": "wide",
-      "label": "FishSmart Pro Dashboard Wide"
+      "label": "FishSmart Pro Desktop Analysis"
     }
   ]
 }

@@ -1,0 +1,23 @@
+{
+  "packageId": "com.fishsmartpro.app",
+  "host": "fishsmartpro-pwa.onrender.com",
+  "name": "FishSmart Pro",
+  "launcherName": "FishSmart",
+  "display": "standalone",
+  "themeColor": "#00d4ff",
+  "navigationColor": "#0a0e27",
+  "backgroundColor": "#0a0e27",
+  "enableNotifications": true,
+  "startUrl": "/",
+  "iconUrl": "https://fishsmartpro-pwa.onrender.com/icon.png",
+  "maskableIconUrl": "https://fishsmartpro-pwa.onrender.com/icon.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./fishsmart-pro-key.keystore",
+    "alias": "fishsmart-pro-alias"
+  },
+  "appVersionCode": 1,
+  "appVersionName": "2.0.0",
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli"
+}
