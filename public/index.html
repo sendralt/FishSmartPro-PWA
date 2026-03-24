@@ -1277,13 +1277,13 @@
 
         async function initBilling() {
             if (!('getDigitalGoodsService' in window)) {
-                console.log('ℹ️ Digital Goods API not available (Non-TWA environment).');
+                console.log('\\u2139\\ufe0f Digital Goods API not available (Non-TWA environment).');
                 return;
             }
 
             try {
                 billingState.service = await window.getDigitalGoodsService(BILLING_CONFIG.serviceUrl);
-                console.log('✅ Connected to Google Play Billing Service');
+                console.log('\\u2705 Connected to Google Play Billing Service');
 
                 const details = await billingState.service.listPurchases();
                 for (const purchase of details) {
@@ -1293,7 +1293,7 @@
                     }
                 }
             } catch (err) {
-                console.error('❌ Billing Init Error:', err);
+                console.error('\\u274c Billing Init Error:', err);
             }
         }
 
@@ -1319,7 +1319,7 @@
                 elements.subModal.classList.remove('active');
                 alert('Welcome to FishSmart Pro Premium! 🚀');
             } catch (err) {
-                console.error('❌ Subscription Failed:', err);
+                console.error('\\u274c Subscription Failed:', err);
                 showError('Transaction cancelled or failed.');
             }
         }
@@ -1475,7 +1475,7 @@
         }
 
         function updateWeatherWidget(weather) {
-            elements.wttrTemp.textContent = weather.temp ? `${weather.temp}°F` : '--';
+            elements.wttrTemp.textContent = weather.temp ? `${weather.temp}\\u00b0F` : '--';
             elements.wttrWind.textContent = weather.wind ? `${weather.wind.speed} mph` : '--';
             elements.wttrPressure.textContent = weather.pressure ? `${weather.pressure} mb` : '--';
             elements.wttrHumidity.textContent = weather.humidity ? `${weather.humidity}%` : '--';
@@ -1615,7 +1615,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Temp (°F)',
+                        label: 'Temp (\\u00b0F)',
                         data: temps,
                         borderColor: '#ff9d00',
                         backgroundColor: 'rgba(255, 157, 0, 0.1)',
@@ -1641,7 +1641,7 @@
                     scales: {
                         y: {
                             type: 'linear', display: true, position: 'left',
-                            title: { display: true, text: 'Temp (°F)', color: '#ff9d00' },
+                            title: { display: true, text: 'Temp (\\u00b0F)', color: '#ff9d00' },
                             grid: { color: 'rgba(255,255,255,0.05)' },
                             ticks: { color: '#ff9d00' }
                         },
@@ -1904,7 +1904,7 @@
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw_v9.js?v=99')
                     .then(reg => console.log('🚀 Service Worker registered:', reg.scope))
-                    .catch(err => console.error('❌ Service Worker registration failed:', err));
+                    .catch(err => console.error('\\u274c Service Worker registration failed:', err));
             });
         }
     </script>

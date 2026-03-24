@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fishsmart-cache-v10';
+const CACHE_NAME = 'fishsmart-cache-v12';
 const URLS_TO_CACHE = [
   '/',
   '/index.html',
