@@ -1,0 +1,85 @@
+{
+  "species_data": [
+    {
+      "name": "Largemouth Bass",
+      "scientific_metrics": { "opt": 72, "dorm": 45, "sensitivity": "Medium" }
+    },
+    {
+      "name": "Smallmouth Bass",
+      "scientific_metrics": { "opt": 67, "dorm": 42, "sensitivity": "Medium" }
+    },
+    {
+      "name": "Walleye",
+      "scientific_metrics": { "opt": 62, "dorm": 38, "sensitivity": "High" }
+    },
+    {
+      "name": "Northern Pike",
+      "scientific_metrics": { "opt": 58, "dorm": 35, "sensitivity": "Low" }
+    },
+    {
+      "name": "Yellow Perch",
+      "scientific_metrics": { "opt": 60, "dorm": 36, "sensitivity": "Medium" }
+    },
+    {
+      "name": "White Bass",
+      "scientific_metrics": { "opt": 68, "dorm": 42, "sensitivity": "Medium" }
+    },
+    {
+      "name": "Striped Bass",
+      "scientific_metrics": { "opt": 66, "dorm": 44, "sensitivity": "Medium" }
+    },
+    {
+      "name": "Muskellunge",
+      "scientific_metrics": { "opt": 65, "dorm": 40, "sensitivity": "Low" }
+    },
+    {
+      "name": "Crappie",
+      "scientific_metrics": { "opt": 68, "dorm": 44, "sensitivity": "High" }
+    },
+    {
+      "name": "Bluegill",
+      "scientific_metrics": { "opt": 70, "dorm": 48, "sensitivity": "Medium" }
+    },
+    {
+      "name": "Catfish",
+      "scientific_metrics": { "opt": 75, "dorm": 50, "sensitivity": "Low" }
+    },
+    {
+      "name": "Channel Catfish",
+      "scientific_metrics": { "opt": 76, "dorm": 52, "sensitivity": "Low" }
+    },
+    {
+      "name": "Bullhead",
+      "scientific_metrics": { "opt": 73, "dorm": 48, "sensitivity": "Low" }
+    },
+    {
+      "name": "Trout",
+      "scientific_metrics": { "opt": 55, "dorm": 33, "sensitivity": "High" }
+    },
+    {
+      "name": "Brown Trout",
+      "scientific_metrics": { "opt": 57, "dorm": 35, "sensitivity": "High" }
+    },
+    {
+      "name": "Steelhead",
+      "scientific_metrics": { "opt": 54, "dorm": 34, "sensitivity": "High" }
+    },
+    {
+      "name": "Salmon",
+      "scientific_metrics": { "opt": 52, "dorm": 34, "sensitivity": "High" }
+    },
+    {
+      "name": "Saugeye",
+      "scientific_metrics": { "opt": 63, "dorm": 39, "sensitivity": "High" }
+    },
+    {
+      "name": "Brook Trout",
+      "scientific_metrics": { "opt": 50, "dorm": 31, "sensitivity": "High" }
+    },
+    {
+      "name": "Rainbow Trout",
+      "scientific_metrics": { "opt": 56, "dorm": 34, "sensitivity": "High" }
+    }
+  ]
+}
+

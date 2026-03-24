@@ -1,0 +1,626 @@
+{
+  "schema_version": "offline-v2",
+  "usage": {
+    "offline_mode": true,
+    "ai_guidance": true,
+    "sources": ["fish-behavior-patterns.md", "fishingData.json"]
+  },
+  "selection_guidelines": {
+    "water_clarity": {
+      "Clear": {
+        "preferred_colors": ["silver", "white", "translucent", "natural baitfish"],
+        "preferred_profile": "smaller and more natural",
+        "notes": "Use subtle action and natural finishes in clear water."
+      },
+      "Stained": {
+        "preferred_colors": ["chartreuse", "orange", "black", "purple"],
+        "preferred_profile": "medium profile with added flash or vibration",
+        "notes": "Contrast and visibility matter more as water darkens."
+      },
+      "Muddy": {
+        "preferred_colors": ["chartreuse", "orange", "black", "dark blue"],
+        "preferred_profile": "larger profile",
+        "notes": "Prioritize vibration, displacement, and sound over exact color match."
+      },
+      "Gin Clear": {
+        "preferred_colors": ["translucent", "silver", "natural green", "smoke"],
+        "preferred_profile": "small finesse presentations",
+        "notes": "Downsize and avoid overly aggressive flash in ultra-clear water."
+      }
+    },
+    "light_conditions": {
+      "Bright": {
+        "preferred_colors": ["chrome", "silver", "translucent"],
+        "notes": "Reflective finishes work well when direct light is available."
+      },
+      "Overcast": {
+        "preferred_colors": ["black", "dark blue", "dark purple"],
+        "notes": "Use higher-contrast silhouettes in lower-light periods."
+      },
+      "DawnDusk": {
+        "preferred_colors": ["black", "dark shad", "bone"],
+        "notes": "Silhouettes often outproduce detailed patterns at low light."
+      }
+    },
+    "depth_temperature": {
+      "ShallowWarm": {
+        "preferred_categories": ["Topwater", "Spinnerbait", "Soft Plastic"],
+        "retrieve_style": "faster and more active",
+        "notes": "Fish are often more willing to chase in shallower, warmer water."
+      },
+      "DeepCold": {
+        "preferred_categories": ["Jig", "Crankbait", "Spoon"],
+        "retrieve_style": "slower with pauses",
+        "notes": "Cold water usually calls for deeper, slower presentations."
+      },
+      "temperature_rule": "Fish are generally more aggressive near species-optimal temperature ranges."
+    },
+    "species_specific_behavior": {
+      "prey_preference": "Match local baitfish, crawfish, insects, or other common forage by size, shape, and movement.",
+      "feeding_style": "Ambush predators often prefer cover-oriented or pause-heavy presentations; active chasers respond better to moving reaction baits.",
+      "seasonal_patterns": "Account for spawn, post-spawn recovery, migration, and seasonal depth shifts."
+    },
+    "local_forage": {
+      "match_the_hatch": true,
+      "examples": [
+        "If fish are feeding on shad, favor silver or white baitfish profiles.",
+        "If crawfish are present, favor brown, orange, green pumpkin, and bottom-oriented lures.",
+        "If insect forage dominates, favor smaller finesse or micro presentations."
+      ]
+    },
+    "water_type": {
+      "current_dataset": "Freshwater",
+      "Freshwater": "Natural greens, browns, shad tones, and varied sizes are primary defaults for this catalog.",
+      "Saltwater": "If saltwater species are added later, bias toward blues, silvers, and larger profiles."
+    },
+    "default_starting_rule": "When uncertain, start with natural colors and adjust based on visibility, fish activity, and local forage."
+  },
+  "lure_catalog": [
+    {
+      "id": "lure_001",
+      "name": "Deep Diver Crankbait",
+      "category": "Crankbait",
+      "type": "Crankbait",
+      "color": "Chartreuse / Shad",
+      "depth": "15-20ft",
+      "primary_species": ["Largemouth Bass", "Walleye"],
+      "species": ["Largemouth Bass", "Walleye"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.75, "Stained": 0.95, "Clear": 0.7, "Gin Clear": 0.5 },
+        "light": ["Dawn", "Overcast", "Dusk"],
+        "seasons": ["Summer", "Fall"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Wind", "Pre-Frontal"]
+      },
+      "target_cover": ["Rocky Points", "Reefs", "Drop-offs"],
+      "presentation": {
+        "cadence": "Steady retrieve with bottom contact",
+        "retrieve": "Deflect off rock and ledges, pause after contact",
+        "notes": "Matches deep structure behavior for summer bass and walleye."
+      },
+      "behavior_tags": ["deep structure", "reaction bite", "baitfish"],
+      "offline_match_reason": "Useful when fish slide deeper on pressure or bright conditions."
+    },
+    {
+      "id": "lure_002",
+      "name": "Senko Worm",
+      "category": "Soft Plastic",
+      "type": "Soft Plastic",
+      "color": "Watermelon Red Flake",
+      "depth": "Shallow/Mid",
+      "primary_species": ["Largemouth Bass", "Smallmouth Bass"],
+      "species": ["Largemouth Bass", "Smallmouth Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.4, "Stained": 0.7, "Clear": 0.95, "Gin Clear": 0.9 },
+        "light": ["Mid-Morning", "Mid-Day", "Late Afternoon"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Ideal",
+        "weather": ["Stable", "Post-Frontal"]
+      },
+      "target_cover": ["Docks", "Weed Edges", "Boat Houses"],
+      "presentation": {
+        "cadence": "Slow fall, long pauses",
+        "retrieve": "Skip to shade or cover and let it sink naturally",
+        "notes": "Strong finesse option when bass are tight to cover in clear water."
+      },
+      "behavior_tags": ["finesse", "clear water", "cover oriented"],
+      "offline_match_reason": "Aligns with bass using docks, weed edges, and slower presentations."
+    },
+    {
+      "id": "lure_003",
+      "name": "Football Jig",
+      "category": "Jig",
+      "type": "Jig",
+      "color": "Black/Blue",
+      "depth": "Bottom",
+      "primary_species": ["Largemouth Bass", "Smallmouth Bass"],
+      "species": ["Largemouth Bass", "Smallmouth Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.85, "Stained": 0.95, "Clear": 0.7, "Gin Clear": 0.5 },
+        "light": ["Overcast", "Mid-Day", "Dusk"],
+        "seasons": ["Spring", "Summer", "Winter"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Post-Frontal", "Wind"]
+      },
+      "target_cover": ["Rock", "Ledges", "Laydowns"],
+      "presentation": {
+        "cadence": "Drag and hop slowly",
+        "retrieve": "Maintain bottom contact around hard cover",
+        "notes": "Fits cold-water and post-frontal bass behavior."
+      },
+      "behavior_tags": ["bottom contact", "cold water", "structure"],
+      "offline_match_reason": "Covers slower deep presentations around rock and wood."
+    },
+    {
+      "id": "lure_004",
+      "name": "Spinnerbait",
+      "category": "Spinnerbait",
+      "type": "Spinnerbait",
+      "color": "White/Silver",
+      "depth": "Shallow/Mid",
+      "primary_species": ["Largemouth Bass", "Northern Pike"],
+      "species": ["Largemouth Bass", "Northern Pike"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.7, "Stained": 0.95, "Clear": 0.8, "Gin Clear": 0.55 },
+        "light": ["Overcast", "Dawn", "Dusk"],
+        "seasons": ["Spring", "Fall"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Wind", "Pre-Frontal"]
+      },
+      "target_cover": ["Grass Lines", "Flats", "Weed Edges"],
+      "presentation": {
+        "cadence": "Moderate retrieve with speed changes",
+        "retrieve": "Run through wind-blown vegetation and current seams",
+        "notes": "Great search bait for roaming bass and pike."
+      },
+      "behavior_tags": ["wind", "reaction bite", "weed edge"],
+      "offline_match_reason": "Lines up with wind-blown points and weed edge positioning."
+    },
+    {
+      "id": "lure_005",
+      "name": "Casting Spoon",
+      "category": "Spoon",
+      "type": "Spoon",
+      "color": "Silver/Gold",
+      "depth": "Variable",
+      "primary_species": ["Trout", "Salmon", "Northern Pike"],
+      "species": ["Trout", "Salmon", "Northern Pike"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.35, "Stained": 0.75, "Clear": 0.95, "Gin Clear": 0.9 },
+        "light": ["Dawn", "Dusk", "Overcast"],
+        "seasons": ["Spring", "Fall"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Wind", "Stable"]
+      },
+      "target_cover": ["Open Water", "Drop-offs", "Inflow/Outflow Areas"],
+      "presentation": {
+        "cadence": "Lift-fall or steady sweep",
+        "retrieve": "Work through deeper holes or open-water bait paths",
+        "notes": "Strong baitfish mimic for cold-water predators."
+      },
+      "behavior_tags": ["baitfish", "cold water", "open water"],
+      "offline_match_reason": "Supports trout and salmon low-light feeding windows and pike edge hunting."
+    },
+    {
+      "id": "lure_006",
+      "name": "Inline Spinner",
+      "category": "Spinnerbait",
+      "type": "Spinner",
+      "color": "Silver/Black",
+      "depth": "Shallow/Variable",
+      "primary_species": ["Yellow Perch", "Brown Trout", "Rainbow Trout", "Brook Trout"],
+      "species": ["Yellow Perch", "Brown Trout", "Rainbow Trout", "Brook Trout"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.3, "Stained": 0.7, "Clear": 0.95, "Gin Clear": 0.98 },
+        "light": ["Dawn", "Late Afternoon", "Overcast"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Stable", "Rising Pressure"]
+      },
+      "target_cover": ["Current Seams", "Gravel Runs", "Undercut Banks"],
+      "presentation": {
+        "cadence": "Steady with occasional stalls",
+        "retrieve": "Cast upstream or across current and keep blade turning",
+        "notes": "Matches trout movement around runs and riffles."
+      },
+      "behavior_tags": ["current", "finesse reaction", "clear water"],
+      "offline_match_reason": "Built around trout behavior in runs, riffles, and cooler water."
+    },
+    {
+      "id": "lure_007",
+      "name": "Paddle Tail Swimbait",
+      "category": "Soft Plastic",
+      "type": "Swimbait",
+      "color": "Pearl Shad",
+      "depth": "Mid/Deep",
+      "primary_species": ["White Bass", "Striped Bass", "Walleye", "Saugeye"],
+      "species": ["White Bass", "Striped Bass", "Walleye", "Saugeye"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.5, "Stained": 0.85, "Clear": 0.9, "Gin Clear": 0.8 },
+        "light": ["Dawn", "Dusk", "Overcast", "Night"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Wind", "Stable"]
+      },
+      "target_cover": ["Points", "Current Breaks", "Bait Schools"],
+      "presentation": {
+        "cadence": "Slow roll or pendulum fall",
+        "retrieve": "Keep near suspended bait or contour edges",
+        "notes": "Useful for roaming baitfish-oriented fish in low light."
+      },
+      "behavior_tags": ["baitfish", "low light", "suspended fish"],
+      "offline_match_reason": "Matches walleye and temperate bass following bait on breaks."
+    },
+    {
+      "id": "lure_008",
+      "name": "Marabou Crappie Jig",
+      "category": "Jig",
+      "type": "Jig",
+      "color": "White/Pink",
+      "depth": "Shallow/Mid",
+      "primary_species": ["Crappie", "Bluegill", "Yellow Perch"],
+      "species": ["Crappie", "Bluegill", "Yellow Perch"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.35, "Stained": 0.8, "Clear": 0.95, "Gin Clear": 0.9 },
+        "light": ["Dawn", "Late Afternoon", "Overcast"],
+        "seasons": ["Spring", "Fall", "Winter"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Stable", "Cloud Cover"]
+      },
+      "target_cover": ["Brush Piles", "Standing Timber", "Dock Pilings"],
+      "presentation": {
+        "cadence": "Pendulum swing or tiny lifts",
+        "retrieve": "Hold above cover and let the marabou breathe",
+        "notes": "Excellent around brush when panfish suspend."
+      },
+      "behavior_tags": ["suspended", "brush", "slow"],
+      "offline_match_reason": "Built from crappie and bluegill cover-oriented behavior."
+    },
+    {
+      "id": "lure_009",
+      "name": "Magnum Bucktail",
+      "category": "Spinnerbait",
+      "type": "Bucktail",
+      "color": "Black/Nickel",
+      "depth": "Mid/Variable",
+      "primary_species": ["Muskellunge", "Northern Pike"],
+      "species": ["Muskellunge", "Northern Pike"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.6, "Stained": 0.9, "Clear": 0.85, "Gin Clear": 0.65 },
+        "light": ["Overcast", "Dusk", "Late Afternoon"],
+        "seasons": ["Summer", "Fall"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Wind", "Pre-Frontal"]
+      },
+      "target_cover": ["Weed Lines", "Rock Bars", "Points"],
+      "presentation": {
+        "cadence": "Burn and flare or moderate retrieve",
+        "retrieve": "Keep blades moving past ambush lanes",
+        "notes": "Designed for aggressive esocid feeding windows."
+      },
+      "behavior_tags": ["ambush", "weed edge", "reaction bite"],
+      "offline_match_reason": "Fits pike and muskellunge behavior around wind-blown weed edges."
+    },
+    {
+      "id": "lure_010",
+      "name": "Slip Float Minnow Rig",
+      "category": "Jig",
+      "type": "Live Bait Rig",
+      "color": "Natural Minnow",
+      "depth": "Shallow/Variable",
+      "primary_species": ["Crappie", "Bluegill", "Yellow Perch"],
+      "species": ["Crappie", "Bluegill", "Yellow Perch"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.45, "Stained": 0.85, "Clear": 0.9, "Gin Clear": 0.85 },
+        "light": ["Dawn", "Mid-Morning", "Dusk"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Stable", "Cloud Cover"]
+      },
+      "target_cover": ["Brush", "Docks", "Submerged Channels"],
+      "presentation": {
+        "cadence": "Hover and soak",
+        "retrieve": "Suspend at fish depth and let wind move the rig",
+        "notes": "Excellent for fish holding on precise depth bands."
+      },
+      "behavior_tags": ["suspend", "live bait", "precise depth"],
+      "offline_match_reason": "Mirrors panfish use of docks, channels, and brush."
+    },
+    {
+      "id": "lure_011",
+      "name": "Cut Bait Bottom Rig",
+      "category": "Rig",
+      "type": "Bottom Rig",
+      "color": "Natural Cut Bait",
+      "depth": "Bottom",
+      "primary_species": ["Channel Catfish", "Bullhead", "Catfish"],
+      "species": ["Channel Catfish", "Bullhead", "Catfish"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.95, "Stained": 0.9, "Clear": 0.65, "Gin Clear": 0.4 },
+        "light": ["Night", "Dusk", "Late Afternoon"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Warm",
+        "weather": ["Rain", "Wind", "Stable"]
+      },
+      "target_cover": ["Deep Holes", "Channel Edges", "Dam Tailwaters"],
+      "presentation": {
+        "cadence": "Dead-stick",
+        "retrieve": "Anchor on travel routes and let scent work",
+        "notes": "Primary offline catfish option tied to warm water and night feeding."
+      },
+      "behavior_tags": ["night", "scent", "bottom"],
+      "offline_match_reason": "Directly aligned with catfish feeding in deep holes and channel edges."
+    },
+    {
+      "id": "lure_012",
+      "name": "Steelhead Worm Drift Rig",
+      "category": "Soft Plastic",
+      "type": "Drift Worm",
+      "color": "Pink",
+      "depth": "Bottom/Drift",
+      "primary_species": ["Steelhead", "Brown Trout", "Rainbow Trout"],
+      "species": ["Steelhead", "Brown Trout", "Rainbow Trout"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.25, "Stained": 0.65, "Clear": 0.95, "Gin Clear": 0.95 },
+        "light": ["Dawn", "Overcast", "Mid-Morning"],
+        "seasons": ["Fall", "Winter", "Spring"],
+        "temperature_band": "Cold",
+        "weather": ["Stable", "Rising Pressure"]
+      },
+      "target_cover": ["Current Seams", "Tailouts", "Deep Runs"],
+      "presentation": {
+        "cadence": "Natural drift",
+        "retrieve": "Tick bottom through runs and seams",
+        "notes": "Best for moving cold-water fish in rivers."
+      },
+      "behavior_tags": ["drift", "current", "cold water"],
+      "offline_match_reason": "Built around trout species holding in runs, seams, and pools."
+    },
+    {
+      "id": "lure_013",
+      "name": "Blade Bait",
+      "category": "Spoon",
+      "type": "Blade Bait",
+      "color": "Silver",
+      "depth": "Mid/Bottom",
+      "primary_species": ["Saugeye", "Walleye", "Yellow Perch", "White Bass"],
+      "species": ["Saugeye", "Walleye", "Yellow Perch", "White Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.5, "Stained": 0.9, "Clear": 0.85, "Gin Clear": 0.7 },
+        "light": ["Dawn", "Dusk", "Overcast", "Night"],
+        "seasons": ["Spring", "Fall", "Winter"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Wind", "Stable"]
+      },
+      "target_cover": ["Drop-offs", "River Channels", "Rock Humps"],
+      "presentation": {
+        "cadence": "Short hops with controlled fall",
+        "retrieve": "Stay near bottom on current edges and breaks",
+        "notes": "Excellent for cool-water feeding around breaks."
+      },
+      "behavior_tags": ["vibration", "low light", "bottom"],
+      "offline_match_reason": "Matches low-light walleye/saugeye behavior on breaks and mud-line edges."
+    },
+    {
+      "id": "lure_014",
+      "name": "Walking Topwater Plug",
+      "category": "Topwater",
+      "type": "Topwater",
+      "color": "Bone",
+      "depth": "Surface",
+      "primary_species": ["Striped Bass", "White Bass", "Largemouth Bass"],
+      "species": ["Striped Bass", "White Bass", "Largemouth Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.3, "Stained": 0.7, "Clear": 0.95, "Gin Clear": 0.95 },
+        "light": ["Dawn", "Dusk"],
+        "seasons": ["Summer", "Fall"],
+        "temperature_band": "Ideal to Warm",
+        "weather": ["Stable", "Overcast"]
+      },
+      "target_cover": ["Schooling Fish", "Flats", "Riprap"],
+      "presentation": {
+        "cadence": "Walk-the-dog",
+        "retrieve": "Pause around busting bait or shallow cover",
+        "notes": "Best during topwater windows near bait activity."
+      },
+      "behavior_tags": ["surface", "schooling fish", "low light"],
+      "offline_match_reason": "Captures dawn/dusk feeding windows described in the behavior guide."
+    },
+    {
+      "id": "lure_015",
+      "name": "Spawn Bag Drift Rig",
+      "category": "Soft Plastic",
+      "type": "Spawn Bag",
+      "color": "Orange",
+      "depth": "Bottom/Drift",
+      "primary_species": ["Salmon", "Steelhead", "Brown Trout"],
+      "species": ["Salmon", "Steelhead", "Brown Trout"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.3, "Stained": 0.7, "Clear": 0.9, "Gin Clear": 0.95 },
+        "light": ["Dawn", "Overcast", "Mid-Morning"],
+        "seasons": ["Fall", "Winter", "Spring"],
+        "temperature_band": "Cold",
+        "weather": ["Stable", "Rising Pressure"]
+      },
+      "target_cover": ["Runs", "Pools", "Current Transitions"],
+      "presentation": {
+        "cadence": "Dead drift",
+        "retrieve": "Present naturally in travel lanes",
+        "notes": "Good for migratory trout and salmon behavior near spawning movement."
+      },
+      "behavior_tags": ["drift", "migration", "current"],
+      "offline_match_reason": "Supports cold-water river presentations tied to seasonal movement."
+    },
+    {
+      "id": "lure_016",
+      "name": "Trout Magnet",
+      "category": "Jig",
+      "type": "Micro Jig",
+      "color": "White",
+      "depth": "Shallow/Variable",
+      "primary_species": ["Brook Trout", "Rainbow Trout", "Brown Trout", "Trout"],
+      "species": ["Brook Trout", "Rainbow Trout", "Brown Trout", "Trout"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.2, "Stained": 0.55, "Clear": 0.95, "Gin Clear": 0.98 },
+        "light": ["Dawn", "Late Afternoon", "Overcast"],
+        "seasons": ["Spring", "Summer", "Winter"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Stable", "Rising Pressure"]
+      },
+      "target_cover": ["Undercut Banks", "Eddies", "Pocket Water"],
+      "presentation": {
+        "cadence": "Tiny twitches and drift",
+        "retrieve": "Keep natural and subtle in clear water",
+        "notes": "Finesse option for pressured or clear-water trout."
+      },
+      "behavior_tags": ["finesse", "clear water", "micro forage"],
+      "offline_match_reason": "Reinforces trout behavior around low light and natural presentations."
+    },
+    {
+      "id": "lure_017",
+      "name": "Tube Jig",
+      "category": "Jig",
+      "type": "Tube Jig",
+      "color": "Green Pumpkin",
+      "depth": "5-20ft",
+      "primary_species": ["Smallmouth Bass", "Walleye"],
+      "species": ["Smallmouth Bass", "Walleye"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.25, "Stained": 0.65, "Clear": 0.98, "Gin Clear": 0.98 },
+        "light": ["Dawn", "Mid-Day", "Late Afternoon"],
+        "seasons": ["Spring", "Summer", "Fall"],
+        "temperature_band": "Cool",
+        "weather": ["Stable", "Wind"]
+      },
+      "target_cover": ["Rocky Shorelines", "Gravel Bars", "Current Breaks"],
+      "presentation": {
+        "cadence": "Drag, shake, and glide",
+        "retrieve": "Imitate crayfish on rock and gravel",
+        "notes": "Especially strong for clear-water smallmouth behavior."
+      },
+      "behavior_tags": ["crayfish", "rock", "clear water"],
+      "offline_match_reason": "Directly maps to smallmouth use of rock, gravel, and current breaks."
+    },
+    {
+      "id": "lure_018",
+      "name": "Weedless Frog",
+      "category": "Topwater",
+      "type": "Frog",
+      "color": "Black",
+      "depth": "Surface",
+      "primary_species": ["Largemouth Bass"],
+      "species": ["Largemouth Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.65, "Stained": 0.85, "Clear": 0.75, "Gin Clear": 0.55 },
+        "light": ["Dawn", "Dusk", "Overcast"],
+        "seasons": ["Summer", "Fall"],
+        "temperature_band": "Ideal to Warm",
+        "weather": ["Stable", "Cloud Cover"]
+      },
+      "target_cover": ["Vegetation", "Lily Pads", "Matted Grass"],
+      "presentation": {
+        "cadence": "Walk and pause",
+        "retrieve": "Work across mats and openings slowly",
+        "notes": "Made for largemouth in heavy vegetation."
+      },
+      "behavior_tags": ["vegetation", "surface", "ambush"],
+      "offline_match_reason": "Follows the behavior guide’s emphasis on vegetation and low-light feeding."
+    },
+    {
+      "id": "lure_019",
+      "name": "Suspending Jerkbait",
+      "category": "Crankbait",
+      "type": "Jerkbait",
+      "color": "Ghost Minnow",
+      "depth": "4-10ft",
+      "primary_species": ["Walleye", "Smallmouth Bass", "Striped Bass", "Saugeye"],
+      "species": ["Walleye", "Smallmouth Bass", "Striped Bass", "Saugeye"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.3, "Stained": 0.7, "Clear": 0.98, "Gin Clear": 0.98 },
+        "light": ["Dawn", "Dusk", "Night", "Overcast"],
+        "seasons": ["Spring", "Fall", "Winter"],
+        "temperature_band": "Cold to Cool",
+        "weather": ["Wind", "Post-Frontal"]
+      },
+      "target_cover": ["Breakwalls", "Rocky Points", "Mud Lines"],
+      "presentation": {
+        "cadence": "Twitch-pause",
+        "retrieve": "Use long pauses in cold water and shorter snaps in warmer water",
+        "notes": "Excellent for low-light predators that suspend around breaks."
+      },
+      "behavior_tags": ["low light", "suspend", "cold water"],
+      "offline_match_reason": "Built around walleye and smallmouth clear-water, low-light movement."
+    },
+    {
+      "id": "lure_020",
+      "name": "Micro Plastic Nymph",
+      "category": "Soft Plastic",
+      "type": "Micro Plastic",
+      "color": "Motor Oil",
+      "depth": "Shallow/Variable",
+      "primary_species": ["Bluegill", "Crappie", "Yellow Perch"],
+      "species": ["Bluegill", "Crappie", "Yellow Perch"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.25, "Stained": 0.65, "Clear": 0.95, "Gin Clear": 0.98 },
+        "light": ["Mid-Morning", "Late Afternoon", "Overcast"],
+        "seasons": ["Spring", "Summer", "Winter"],
+        "temperature_band": "Cool to Warm",
+        "weather": ["Stable", "Cloud Cover"]
+      },
+      "target_cover": ["Weed Edges", "Brush Piles", "Shallow Flats"],
+      "presentation": {
+        "cadence": "Slow pendulum or under float",
+        "retrieve": "Keep near bedding zones or deep edges depending on season",
+        "notes": "Good finesse forage match for panfish."
+      },
+      "behavior_tags": ["micro forage", "beds", "finesse"],
+      "offline_match_reason": "Supports spawning flats, weed edges, and slow winter panfish presentations."
+    },
+    {
+      "id": "lure_021",
+      "name": "Glide Bait",
+      "category": "Topwater",
+      "type": "Glide Bait",
+      "color": "Cisco",
+      "depth": "Mid/Variable",
+      "primary_species": ["Muskellunge", "Northern Pike", "Striped Bass"],
+      "species": ["Muskellunge", "Northern Pike", "Striped Bass"],
+      "ice_only": false,
+      "best_conditions": {
+        "water_clarity": { "Muddy": 0.35, "Stained": 0.7, "Clear": 0.95, "Gin Clear": 0.9 },
+        "light": ["Overcast", "Late Afternoon", "Dusk"],
+        "seasons": ["Fall", "Summer"],
+        "temperature_band": "Cool to Ideal",
+        "weather": ["Wind", "Pre-Frontal"]
+      },
+      "target_cover": ["Rock Bars", "Points", "Deep Weed Lines"],
+      "presentation": {
+        "cadence": "Wide sweeps with hangs",
+        "retrieve": "Trigger followers beside major ambush structure",
+        "notes": "Big profile option for apex predators during active windows."
+      },
+      "behavior_tags": ["big bait", "ambush", "follow trigger"],
+      "offline_match_reason": "Built for large predators around edge and point ambush zones."
+    }
+  ]
+}

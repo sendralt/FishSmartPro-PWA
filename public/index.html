@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FishSmart Pro - Advanced AI-powered fishing intelligence platform">
+    <title>FishSmart Pro | Advanced Fishing Intelligence</title>
+    
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+        function updateDashboard(data) {
+            console.log('📊 AZ-V7-FORCE-MAIN Updating Dashboard:', data);
+            const rank = data.bite_rank || 'Fair';
+            const prob = data.bite_probability || 50;
+
+            // Set big main text to Rank (Primary Requirement)
+            const biteElem = document.getElementById('biteProbability');
+            if (biteElem) biteElem.textContent = rank;
+
+            // Set small label to % 
+            const scoreLabel = document.querySelector('.bg-blue-600 .text-xs.font-bold');
+            if (scoreLabel) scoreLabel.textContent = prob + '% Probability';
+
+            if (data.forecast_12h) updateForecastChart(data.forecast_12h);
+            if (data.weather) updateWeatherWidget(data.weather);
+            if (elements.strategyContent) elements.strategyContent.innerHTML = formatContent(data.strategy);
+            if (elements.safetyContent) elements.safetyContent.innerHTML = formatContent(data.safety);
+            if (elements.intelContent) elements.intelContent.innerHTML = formatContent(data.intel);
+            if (data.map_url && elements.mapLink) elements.mapLink.href = data.map_url;
+            if (data.solunar) {
+                if (elements.moonPhase) elements.moonPhase.textContent = getMoonPhaseIcon(data.solunar.moon_phase);
+                if (elements.solunarAssessment) elements.solunarAssessment.textContent = data.solunar.assessment;
+            }
+            if (data.activity && typeof renderActivityChart === 'function') renderActivityChart(data.activity);
+        }
+
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700" rel="stylesheet">
+    
+    <style>
+        /* ============================================
+           FISH SMART PRO - DEEP OCEAN TECH AESTHETIC
+           ============================================ */
+        
+        :root {
+            /* Primary Color Palette - Deep Ocean */
+            --primary-dark: #0a0e27;
+            --primary-medium: #1a1f3a;
+            --primary-light: #2a3f5f;
+            
+            /* Accent Colors - Electric & Bioluminescent */
+            --accent-cyan: #00d4ff;
+            --accent-teal: #00ff9d;
+            --accent-purple: #7b68ee;
+            --accent-pink: #ff6b9d;
+            
+            /* Status Colors */
+            --success: #00ff9d;
+            --warning: #ffcc00;
+            --danger: #ff4757;
+            --info: #00d4ff;
+            
+            /* Text Colors */
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+            
+            /* Gradients */
+            --gradient-ocean: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2a3f5f 100%);
+            --gradient-cyan: linear-gradient(135deg, #00d4ff 0%, #00ff9d 100%);
+            --gradient-purple: linear-gradient(135deg, #7b68ee 0%, #ff6b9d 100%);
+            
+            /* Effects */
+            --glow-cyan: 0 0 20px rgba(0, 212, 255, 0.5);
+            --glow-teal: 0 0 20px rgba(0, 255, 157, 0.5);
+            --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 30px rgba(0, 212, 255, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background: var(--primary-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(0, 255, 157, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(123, 104, 238, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Scanline Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Container */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ============================================
+           SIDEBAR - Control Panel
+           ============================================ */
+        
+        .sidebar {
+            width: 380px;
+            background: linear-gradient(180deg, var(--primary-medium) 0%, var(--primary-dark) 100%);
+            border-right: 1px solid rgba(0, 212, 255, 0.2);
+            padding: 30px 25px;
+            flex-shrink: 0;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                transparent 0%, 
+                var(--accent-cyan) 50%, 
+                transparent 100%);
+            opacity: 0.3;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-cyan);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: var(--glow-cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            background: var(--gradient-cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-badge {
+            font-size: 0.7rem;
+            color: var(--accent-teal);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300d4ff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            padding-right: 40px;
+        }
+
+        .form-select option {
+            background-color: var(--primary-medium);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        /* Advanced Options */
+        .advanced-section {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .advanced-section summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--accent-teal);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .advanced-section summary::before {
+            content: '▸';
+            transition: transform 0.3s ease;
+        }
+
+        .advanced-section[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .advanced-content {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(0, 212, 255, 0.1);
+        }
+
+        /* Checkbox */
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox input {
+            display: none;
+        }
+
+        .custom-checkbox.checked {
+            background: var(--accent-cyan);
+            border-color: var(--accent-cyan);
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            color: var(--primary-dark);
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .checkbox-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-cyan);
+            color: var(--primary-dark);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            margin-top: 15px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ============================================
+           MAIN CONTENT - Dashboard
+           ============================================ */
+        
+        .main-content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 40px;
+            order: 2;
+        }
+
+        .header-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .system-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 8px;
+        }
+
+        .system-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .system-info-item .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-teal);
+            box-shadow: 0 0 10px var(--accent-teal);
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 60px 40px;
+            animation: fadeIn 0.8s ease-out;
+            order: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        .welcome-text {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            display: none;
+            text-align: center;
+            padding: 80px 40px;
+            order: 3;
+        }
+
+        .loading-screen.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+
+        .spinner::before,
+        .spinner::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            animation: spin 1.5s ease-in-out infinite;
+        }
+
+        .spinner::before {
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top-color: var(--accent-cyan);
+            border-right-color: var(--accent-cyan);
+        }
+
+        .spinner::after {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border: 4px solid transparent;
+            border-bottom-color: var(--accent-teal);
+            border-left-color: var(--accent-teal);
+            animation-direction: reverse;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+        }
+
+        .loading-subtext {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Error Message */
+        .error-message {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid var(--danger);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            order: 0;
+        }
+
+        .error-message.active {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .error-text {
+            color: var(--danger);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* ============================================
+           RESULTS DASHBOARD
+           ============================================ */
+        
+        .results-dashboard {
+            display: none;
+            order: 4;
+        }
+
+        .results-dashboard.active {
+            display: block;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .dashboard-actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            justify-content: flex-end;
+        }
+
+        .dashboard-actions .btn {
+            width: auto;
+            padding: 12px 25px;
+            margin-top: 0;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Weather Widget */
+        .weather-widget {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .weather-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--accent-cyan);
+        }
+
+        .weather-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .weather-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 5px;
+        }
+
+        .weather-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-cyan);
+        }
+
+        .info-card-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-card-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .info-card-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-card-content li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .info-card-content li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-teal);
+        }
+
+        /* Warning Card */
+        .warning-card {
+            background: rgba(255, 204, 0, 0.05);
+            border-color: rgba(255, 204, 0, 0.2);
+        }
+
+        .warning-card::before {
+            background: var(--warning);
+        }
+
+        .warning-card .info-card-title {
+            color: var(--warning);
+        }
+
+        /* Solunar Card */
+        .solunar-card {
+            background: linear-gradient(135deg, rgba(123, 104, 238, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+            border-color: rgba(123, 104, 238, 0.2);
+        }
+
+        .solunar-card::before {
+            background: var(--gradient-purple);
+        }
+
+        .solunar-card .info-card-title {
+            color: var(--accent-purple);
+        }
+
+        .moon-phase {
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        .solunar-assessment {
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* Map Link */
+        .map-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 30px;
+            background: var(--gradient-cyan);
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .map-link:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--glow-cyan);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 15px;
+            padding: 30px;
+        }
+
+        .chart-container .info-card-title {
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+        
+        @media (max-width: 1200px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+                order: 2; /* Sidebar comes after Welcome Screen */
+            }
+
+            .main-content {
+                padding: 0; /* Remove padding to allow children to control spacing */
+                order: 1; /* Container for all main elements */
+                display: contents; /* Treat children as direct flex items of app-container */
+            }
+
+            .welcome-screen {
+                order: 1;
+                padding: 40px 20px;
+            }
+
+            .header {
+                order: 3; /* Header moves below sidebar */
+                padding: 20px;
+            }
+
+            .loading-screen {
+                order: 4;
+                padding: 20px;
+            }
+
+            .results-dashboard {
+                order: 5;
+                padding: 20px;
+            }
+
+            .error-message {
+                order: 0;
+                margin: 10px 20px;
+            }
+
+            .header-title {
+                font-size: 1.8rem;
+            }
+
+            .weather-widget {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .weather-widget {
+                grid-template-columns: 1fr;
+            }
+
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* ============================================
+           UTILITY CLASSES
+           ============================================ */
+        
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mb-20 {
+            margin-bottom: 20px;
+        }
+
+        .mt-20 {
+            margin-top: 20px;
+        }
+    </style>
+
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json?v=5">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FishSmart Pro">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar - Control Panel -->
+        <aside class="sidebar">
+            <!-- Logo -->
+            <div class="logo">
+                <div class="logo-icon">🎣</div>
+                <div>
+                    <div class="logo-text">FISHSMART PRO</div>
+                    <div class="logo-badge">Advanced Intelligence</div>
+                </div>
+            </div>
+
+            <!-- Location Input -->
+            <div class="form-group">
+                <label class="form-label" for="location">Body of Water</label>
+                <input type="text" id="location" class="form-input" value="Lake Erie, Ohio" placeholder="Enter location...">
+            </div>
+
+            <!-- Species Selection -->
+            <div class="form-group">
+                <label class="form-label" for="species">Target Species</label>
+                <select id="species" class="form-select">
+                    <option value="Largemouth Bass">Largemouth Bass</option>
+                    <option value="Smallmouth Bass">Smallmouth Bass</option>
+                    <option value="Walleye">Walleye</option>
+                    <option value="Northern Pike">Northern Pike</option>
+                    <option value="Crappie">Crappie</option>
+                    <option value="Trout">Trout</option>
+                    <option value="Catfish">Catfish</option>
+                    <option value="Bluegill">Bluegill</option>
+                    <option value="Yellow Perch">Yellow Perch</option>
+                    <option value="White Bass">White Bass</option>
+                    <option value="Striped Bass">Striped Bass</option>
+                    <option value="Brown Trout">Brown Trout</option>
+                    <option value="Steelhead">Steelhead</option>
+                    <option value="Salmon">Salmon</option>
+                    <option value="Saugeye">Saugeye</option>
+                    <option value="Brook Trout">Brook Trout</option>
+                    <option value="Muskellunge">Muskellunge</option>
+                    <option value="Rainbow Trout">Rainbow Trout</option>
+                    <option value="Bullhead">Bullhead</option>
+                    <option value="Channel Catfish">Channel Catfish</option>
+                </select>
+            </div>
+
+            <!-- Advanced Options -->
+            <details class="advanced-section">
+                <summary>Advanced Metrics</summary>
+                <div class="advanced-content">
+                    <div class="form-group">
+                        <label class="form-label" for="clarity">Water Clarity</label>
+                        <select id="clarity" class="form-select">
+                            <option value="Muddy">Muddy</option>
+                            <option value="Stained">Stained</option>
+                            <option value="Clear" selected>Clear</option>
+                            <option value="Gin Clear">Gin Clear</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-wrapper">
+                        <label class="custom-checkbox" id="boatCheckbox">
+                            <input type="checkbox" id="boat" checked>
+                        </label>
+                        <span class="checkbox-label">Fishing from Boat?</span>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Action Buttons -->
+            <button class="btn btn-primary" id="generateBtn">
+                Generate Master Plan
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 class="header-title">🎣 FishSmart Pro Dashboard</h1>
+                <p class="header-subtitle">Advanced AI-Powered Fishing Intelligence Platform</p>
+                
+                <div class="system-info">
+                    <div class="system-info-item">
+                        <span class="status-dot"></span>
+                        <span id="systemStatus">System Online</span>
+                    </div>
+                    <div class="system-info-item">
+                        <span>🕐</span>
+                        <span id="systemTime">--</span>
+                    </div>
+                    <div class="system-info-item">
+                        <span>🤖</span>
+                        <span>AI Engine: Gemini</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <div class="error-text">
+                    <span>⚠️</span>
+                    <span id="errorText">An error occurred</span>
+                </div>
+            </div>
+
+            <!-- Welcome Screen -->
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-icon">🐟</div>
+                <h2 class="welcome-title">Welcome to FishSmart Pro</h2>
+                <p class="welcome-text">
+                    Configure your fishing parameters in the control panel and click "Generate Master Plan" 
+                    to receive AI-powered fishing strategies, real-time weather data, and solunar forecasts 
+                    tailored to your specific location and target species.
+                </p>
+            </div>
+
+            <!-- Loading Screen -->
+            <div class="loading-screen" id="loadingScreen">
+                <div class="spinner"></div>
+                <h3 class="loading-text">Analyzing Conditions...</h3>
+                <p class="loading-subtext">Fetching weather data • Processing solunar patterns • Generating strategy</p>
+            </div>
+
+	            <!-- Results Dashboard -->
+	            <div class="results-dashboard" id="resultsDashboard">
+                    <!-- Dashboard Actions -->
+                    <div class="dashboard-actions">
+                        <button class="btn btn-secondary" id="refreshBtn">
+                            Refresh Analysis
+                        </button>
+                        <button class="btn btn-secondary" id="newPlanBtnTop">
+                            New Plan
+                        </button>
+                    </div>
+
+	                <!-- Weather Widget -->
+	                <div class="weather-widget">
+	                    <div class="weather-card">
+	                        <div class="weather-icon">🎯</div>
+	                        <div class="weather-value" id="biteProbability">--</div>
+	                        <div class="weather-label">Bite Probability</div>
+	                    </div>
+	                    <div class="weather-card">
+	                        <div class="weather-icon">🌡️</div>
+	                        <div class="weather-value" id="wttrTemp">--</div>
+	                        <div class="weather-label">Temperature</div>
+	                    </div>
+                    <div class="weather-card">
+                        <div class="weather-icon">💨</div>
+                        <div class="weather-value" id="wttrWind">--</div>
+                        <div class="weather-label">Wind Speed</div>
+                    </div>
+                    <div class="weather-card">
+                        <div class="weather-icon">🌡️</div>
+                        <div class="weather-value" id="wttrPressure">--</div>
+                        <div class="weather-label">Pressure</div>
+                    </div>
+                    <div class="weather-card">
+                        <div class="weather-icon">💧</div>
+                        <div class="weather-value" id="wttrHumidity">--</div>
+                        <div class="weather-label">Humidity</div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <!-- Left Column -->
+                    <div class="left-column">
+                        <!-- Strategy Card -->
+                        <div class="info-card">
+                            <h3 class="info-card-title">🎯 Recommended Strategy</h3>
+                            <div class="info-card-content" id="strategyContent">
+                                --
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="right-column">
+                        <!-- Intel Card -->
+                        <div class="info-card">
+                            <h3 class="info-card-title">🌍 Location Intelligence</h3>
+                            <div class="info-card-content" id="intelContent">
+                                --
+                            </div>
+                            <a class="map-link" id="mapLink" href="#" target="_blank">
+                                🗺️ Open in Maps
+                            </a>
+                        </div>
+
+                        <!-- Solunar Card -->
+                        <div class="info-card solunar-card">
+                            <h3 class="info-card-title">🌑 Solunar Forecast</h3>
+                            <div class="moon-phase" id="moonPhase">🌕</div>
+                            <p class="solunar-assessment" id="solunarAssessment">
+                                --
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Chart -->
+                <div class="chart-container mb-20">
+                    <h3 class="info-card-title">📈 12-Hour Activity Forecast</h3>
+                    <canvas id="activityChart"></canvas>
+                </div>
+
+                <!-- Safety Card (Moved to bottom) -->
+                <div class="info-card warning-card">
+                    <h3 class="info-card-title">🛡️ Safety & Regulations</h3>
+                    <div class="info-card-content" id="safetyContent">
+                        --
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // FISHSMART PRO - CLIENT-SIDE APPLICATION
+        // ============================================
+
+        // Application State
+        const state = {
+            chart: null,
+            isGenerating: false
+        };
+
+        // DOM Elements
+        const elements = {
+            location: document.getElementById('location'),
+            species: document.getElementById('species'),
+            clarity: document.getElementById('clarity'),
+            boat: document.getElementById('boat'),
+            boatCheckbox: document.getElementById('boatCheckbox'),
+            generateBtn: document.getElementById('generateBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            newPlanBtnTop: document.getElementById('newPlanBtnTop'),
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            loadingScreen: document.getElementById('loadingScreen'),
+            resultsDashboard: document.getElementById('resultsDashboard'),
+            errorMessage: document.getElementById('errorMessage'),
+            errorText: document.getElementById('errorText'),
+            systemTime: document.getElementById('systemTime'),
+            // Weather elements
+            wttrTemp: document.getElementById('wttrTemp'),
+            wttrWind: document.getElementById('wttrWind'),
+            wttrPressure: document.getElementById('wttrPressure'),
+            wttrHumidity: document.getElementById('wttrHumidity'),
+            // Content elements
+            strategyContent: document.getElementById('strategyContent'),
+            safetyContent: document.getElementById('safetyContent'),
+            intelContent: document.getElementById('intelContent'),
+            mapLink: document.getElementById('mapLink'),
+            moonPhase: document.getElementById('moonPhase'),
+            solunarAssessment: document.getElementById('solunarAssessment'),
+            activityChart: document.getElementById('activityChart')
+        };
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+
+        function init() {
+            updateSystemTime();
+            setInterval(updateSystemTime, 1000);
+            setupEventListeners();
+            console.log('🎣 FishSmart Pro initialized');
+        }
+
+        function updateSystemTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { 
+                hour12: true, 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            const dateStr = now.toLocaleDateString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric'
+            });
+            elements.systemTime.textContent = `${dateStr} • ${timeStr}`;
+        }
+
+        function setupEventListeners() {
+            elements.generateBtn.addEventListener('click', handleGenerate);
+            if (elements.refreshBtn) {
+                elements.refreshBtn.addEventListener('click', handleRefresh);
+            }
+            if (elements.newPlanBtnTop) {
+                elements.newPlanBtnTop.addEventListener('click', handleNewPlan);
+            }
+            elements.boat.addEventListener('change', handleBoatToggle);
+            elements.boatCheckbox.addEventListener('click', () => {
+                elements.boat.checked = !elements.boat.checked;
+                elements.boatCheckbox.classList.toggle('checked', elements.boat.checked);
+            });
+
+            // Diagnostic logging: verify control presence and initial dashboard visibility
+            console.log('🧪 Diagnostics: controls present', {
+                generateBtn: !!elements.generateBtn,
+                refreshBtn: !!elements.refreshBtn,
+                newPlanBtnTop: !!elements.newPlanBtnTop,
+                resultsDashboard: !!elements.resultsDashboard,
+                welcomeScreen: !!elements.welcomeScreen,
+                loadingScreen: !!elements.loadingScreen
+            });
+            console.log('🧪 Diagnostics: initial dashboard state', {
+                classList: elements.resultsDashboard.className,
+                hasActiveClass: elements.resultsDashboard.classList.contains('active'),
+                computedDisplay: window.getComputedStyle(elements.resultsDashboard).display
+            });
+        }
+
+        function handleBoatToggle() {
+            elements.boatCheckbox.classList.toggle('checked', elements.boat.checked);
+        }
+
+        function handleRefresh() {
+            console.log('🔄 Refreshing Analysis...');
+            console.log('🧪 Diagnostics: refresh button clicked');
+            handleGenerate();
+        }
+
+        function handleNewPlan() {
+            // Reset form fields
+            elements.location.value = 'Lake Erie, Ohio';
+            elements.species.selectedIndex = 0;
+            elements.clarity.value = 'Clear';
+            elements.boat.checked = true;
+            elements.boatCheckbox.classList.add('checked');
+
+            // Reset UI state
+            elements.welcomeScreen.classList.remove('hidden');
+            elements.resultsDashboard.classList.remove('active');
+            elements.loadingScreen.classList.remove('active');
+            hideError();
+
+            console.log('🧪 Diagnostics: after handleNewPlan UI state', {
+                welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
+                resultsActive: elements.resultsDashboard.classList.contains('active'),
+                resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
+                loadingActive: elements.loadingScreen.classList.contains('active')
+            });
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            console.log('🔄 New Plan started - Form reset');
+        }
+
+        function updateWeatherWidget(weather) {
+            elements.wttrTemp.textContent = weather.temp ? `${weather.temp}°F` : '--';
+            elements.wttrWind.textContent = weather.wind ? `${weather.wind.speed} mph` : '--';
+            elements.wttrPressure.textContent = weather.pressure ? `${weather.pressure} mb` : '--';
+            elements.wttrHumidity.textContent = weather.humidity ? `${weather.humidity}%` : '--';
+        }
+
+        // ============================================
+        // STRATEGY GENERATION
+        // ============================================
+
+        async function handleGenerate() {
+            if (state.isGenerating) return;
+
+            const location = elements.location.value.trim();
+            if (!location) {
+                showError('Please enter a location');
+                return;
+            }
+
+            state.isGenerating = true;
+            elements.generateBtn.disabled = true;
+            elements.loadingScreen.classList.add('active');
+            elements.welcomeScreen.classList.add('hidden');
+            elements.resultsDashboard.classList.remove('active');
+            hideError();
+
+            console.log('🧪 Diagnostics: handleGenerate start UI state', {
+                loadingActive: elements.loadingScreen.classList.contains('active'),
+                welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
+                resultsActive: elements.resultsDashboard.classList.contains('active'),
+                resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display
+            });
+
+	            try {
+	                // Default to same-origin backend (e.g., http://localhost:3000) unless
+	                // a custom API base URL is explicitly provided (for native/mobile).
+	                const API_BASE_URL = window.API_BASE_URL || '';
+                const response = await fetch(`${API_BASE_URL}/api/generate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        location,
+                        species: elements.species.value,
+                        clarity: elements.clarity.value,
+                        engine: 'gemini-3-flash-preview',
+                        isBoat: elements.boat.checked,
+                        currentTime: new Date().toLocaleString()
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to generate strategy');
+                }
+
+                // Update all content
+                updateDashboard(data.data);
+                
+                // Show results
+                elements.loadingScreen.classList.remove('active');
+                elements.resultsDashboard.classList.add('active');
+
+                console.log('🧪 Diagnostics: generation success UI state', {
+                    loadingActive: elements.loadingScreen.classList.contains('active'),
+                    welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
+                    resultsActive: elements.resultsDashboard.classList.contains('active'),
+                    resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
+                    refreshBtnVisible: !!elements.refreshBtn && window.getComputedStyle(elements.refreshBtn).display !== 'none',
+                    newPlanBtnTopVisible: !!elements.newPlanBtnTop && window.getComputedStyle(elements.newPlanBtnTop).display !== 'none'
+                });
+
+            } catch (error) {
+                console.error('🧪 Diagnostics: generation failed', {
+                    message: error?.message || String(error)
+                });
+                showError(error.message);
+                elements.loadingScreen.classList.remove('active');
+                elements.welcomeScreen.classList.remove('hidden');
+
+                console.log('🧪 Diagnostics: generation failure UI state', {
+                    loadingActive: elements.loadingScreen.classList.contains('active'),
+                    welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
+                    resultsActive: elements.resultsDashboard.classList.contains('active'),
+                    resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
+                    errorVisible: elements.errorMessage.classList.contains('active')
+                });
+            } finally {
+                state.isGenerating = false;
+                elements.generateBtn.disabled = false;
+
+                console.log('🧪 Diagnostics: handleGenerate finally', {
+                    isGenerating: state.isGenerating,
+                    generateBtnDisabled: elements.generateBtn.disabled
+                });
+            }
+        }
+
+        function updateForecastChart(forecast) {
+            const ctx = document.getElementById('activityChart').getContext('2d');
+            const labels = forecast.map(f => {
+                const date = new Date(f.time);
+                return date.getHours() % 12 || 12 + (date.getHours() >= 12 ? ' PM' : ' AM');
+            });
+            const temps = forecast.map(f => f.temp);
+            const pressures = forecast.map(f => f.pressure);
+
+            if (state.chart) {
+                state.chart.destroy();
+            }
+
+            state.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temp (°F)',
+                        data: temps,
+                        borderColor: '#ff9d00',
+                        backgroundColor: 'rgba(255, 157, 0, 0.1)',
+                        borderWidth: 2,
+                        yAxisID: 'y',
+                        tension: 0.4
+                    }, {
+                        label: 'Pressure (hPa)',
+                        data: pressures,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        borderWidth: 2,
+                        yAxisID: 'y1',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#888' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#888' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff' } }
+                    }
+                }
+            });
+        }
+
+                
+
+            // 2. Update 12-hour forecast chart
+            if (data.forecast_12h) {
+                updateForecastChart(data.forecast_12h);
+            }
+
+            // 3. Update weather
+            if (data.weather) {
+                updateWeatherWidget(data.weather);
+            }
+
+            // 4. Update content cards
+            if (elements.strategyContent) elements.strategyContent.innerHTML = formatContent(data.strategy);
+            if (elements.safetyContent) elements.safetyContent.innerHTML = formatContent(data.safety);
+            if (elements.intelContent) elements.intelContent.innerHTML = formatContent(data.intel);
+
+            if (data.map_url && elements.mapLink) {
+                elements.mapLink.href = data.map_url;
+            }
+
+            if (data.solunar) {
+                if (elements.moonPhase) elements.moonPhase.textContent = getMoonPhaseIcon(data.solunar.moon_phase);
+                if (elements.solunarAssessment) elements.solunarAssessment.textContent = data.solunar.assessment;
+            }
+
+            if (data.activity && typeof renderActivityChart === 'function') {
+                renderActivityChart(data.activity);
+            }
+        }
+
+        function formatContent(content) {
+            if (!content) return '--';
+            if (typeof content === 'string') {
+                // Return textContent by default to prevent XSS
+                const div = document.createElement('div');
+                div.textContent = content;
+                return div.innerHTML
+                    .replace(/\n/g, '<br>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
+            }
+            return String(content);
+        }
+
+        function getMoonPhaseIcon(phase) {
+            const phaseLower = phase.toLowerCase();
+            if (phaseLower.includes('full')) return '🌕';
+            if (phaseLower.includes('new')) return '🌑';
+            if (phaseLower.includes('first quarter')) return '🌓';
+            if (phaseLower.includes('last quarter')) return '🌗';
+            if (phaseLower.includes('waxing crescent')) return '🌒';
+            if (phaseLower.includes('waxing gibbous')) return '🌔';
+            if (phaseLower.includes('waning crescent')) return '🌘';
+            if (phaseLower.includes('waning gibbous')) return '🌖';
+            return '🌙';
+        }
+
+        // ============================================
+        // CHART RENDERING
+        // ============================================
+
+        function renderActivityChart(dataPoints) {
+            const ctx = elements.activityChart.getContext('2d');
+            
+            if (state.chart) {
+                state.chart.destroy();
+            }
+
+            // Generate labels for next 12 hours
+            const labels = [];
+            const now = new Date();
+            for (let i = 0; i < 12; i++) {
+                const hour = (now.getHours() + i) % 24;
+                const ampm = hour >= 12 ? 'PM' : 'AM';
+                const hour12 = hour % 12 || 12;
+                labels.push(`${hour12} ${ampm}`);
+            }
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
+            gradient.addColorStop(1, 'rgba(0, 212, 255, 0.0)');
+
+            state.chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Activity Level',
+                        data: Array.isArray(dataPoints) ? dataPoints : [6, 8, 9, 10, 8, 7, 5, 4, 3, 4, 6, 8],
+                        borderColor: '#00d4ff',
+                        backgroundColor: gradient,
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#00ff9d',
+                        pointBorderColor: '#00d4ff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(10, 14, 39, 0.9)',
+                            titleColor: '#00d4ff',
+                            bodyColor: '#ffffff',
+                            borderColor: '#00d4ff',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    let level = 'Low';
+                                    if (value >= 8) level = 'Excellent';
+                                    else if (value >= 6) level = 'Good';
+                                    else if (value >= 4) level = 'Moderate';
+                                    return `Activity: ${value}/10 (${level})`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(0, 212, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#a0aec0',
+                                font: {
+                                    family: 'Rajdhani',
+                                    size: 12
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: {
+                                color: 'rgba(0, 212, 255, 0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: '#a0aec0',
+                                stepSize: 2,
+                                font: {
+                                    family: 'Rajdhani',
+                                    size: 12
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // ERROR HANDLING
+        // ============================================
+
+        function showError(message) {
+            elements.errorText.textContent = message;
+            elements.errorMessage.classList.add('active');
+        }
+
+        function hideError() {
+            elements.errorMessage.classList.remove('active');
+        }
+
+        // ============================================
+        // START APPLICATION
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js?v=5')
+                    .then(reg => console.log('🚀 Service Worker registered:', reg.scope))
+                    .catch(err => console.error('❌ Service Worker registration failed:', err));
+            });
+        }
+    </script>
+
+</body>
+</html>
