@@ -230,25 +230,39 @@ async function fetchFromOpenWeather(term, apiKey) {
  * @param {Object} data - Raw weather data from API
  * @returns {Object} Transformed weather data
  */
+
 function transformWeatherData(data) {
+    if (!data || !data.current) return null;
+    const current = data.current;
+
+    // Process 12-hour forecast (4 intervals of 3 hours each from OpenWeather)
+    const forecast_12h = [];
+    if (data.forecast && data.forecast.list) {
+        data.forecast.list.slice(0, 4).forEach(item => {
+            forecast_12h.push({
+                time: item.dt_txt,
+                temp: Math.round(item.main.temp),
+                pressure: item.main.pressure
+            });
+        });
+    }
+
     return {
-        temp: Math.round(data.main.temp),
-        temp_min: Math.round(data.main.temp_min),
-        temp_max: Math.round(data.main.temp_max),
-        feels_like: Math.round(data.main.feels_like),
+        temp: Math.round(current.main.temp),
+        feels_like: Math.round(current.main.feels_like),
+        humidity: current.main.humidity,
+        pressure: current.main.pressure,
+        desc: current.weather?.[0]?.description || 'Unknown',
+        icon: current.weather?.[0]?.icon || '01d',
         wind: {
-            speed: Math.round(data.wind.speed),
-            direction: data.wind.deg || 0
+            speed: Math.round(current.wind.speed),
+            direction: current.wind.deg
         },
-        pressure: data.main.pressure,
-        humidity: data.main.humidity,
-        desc: data.weather?.[0]?.description || 'Unknown',
-        icon: data.weather?.[0]?.icon || '01d',
-        visibility: data.visibility ? Math.round(data.visibility / 1609) : null, // Convert to miles
-        cloudiness: data.clouds?.all || 0,
-        hourly: [] // Can be expanded with forecast API
+        visibility: current.visibility ? (current.visibility / 1609.34).toFixed(1) : null,
+        forecast_12h: forecast_12h
     };
 }
+
 
 /**
  * Resolve a user-entered body of water or location string to coordinates
@@ -532,6 +546,7 @@ function buildOfflineFishingStrategy(params, weather, reason) {
         bite_probability: scientificData?.biteProbability || 50,
         bite_rank: scientificData?.biteRank || 'Fair',
         bite_reasoning: scientificData?.biteReasoning || 'Offline scientific fallback applied.',
+        forecast_12h: [],
         offline_mode: true
     };
 }
