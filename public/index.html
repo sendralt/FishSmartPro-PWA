@@ -7,34 +7,7 @@
     <title>FishSmart Pro | Advanced Fishing Intelligence</title>
     
     <!-- External Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-        function updateDashboard(data) {
-            console.log('📊 AZ-V7-FORCE-MAIN Updating Dashboard:', data);
-            const rank = data.bite_rank || 'Fair';
-            const prob = data.bite_probability || 50;
-
-            // Set big main text to Rank (Primary Requirement)
-            const biteElem = document.getElementById('biteProbability');
-            if (biteElem) biteElem.textContent = rank;
-
-            // Set small label to % 
-            const scoreLabel = document.querySelector('.bg-blue-600 .text-xs.font-bold');
-            if (scoreLabel) scoreLabel.textContent = prob + '% Probability';
-
-            if (data.forecast_12h) updateForecastChart(data.forecast_12h);
-            if (data.weather) updateWeatherWidget(data.weather);
-            if (elements.strategyContent) elements.strategyContent.innerHTML = formatContent(data.strategy);
-            if (elements.safetyContent) elements.safetyContent.innerHTML = formatContent(data.safety);
-            if (elements.intelContent) elements.intelContent.innerHTML = formatContent(data.intel);
-            if (data.map_url && elements.mapLink) elements.mapLink.href = data.map_url;
-            if (data.solunar) {
-                if (elements.moonPhase) elements.moonPhase.textContent = getMoonPhaseIcon(data.solunar.moon_phase);
-                if (elements.solunarAssessment) elements.solunarAssessment.textContent = data.solunar.assessment;
-            }
-            if (data.activity && typeof renderActivityChart === 'function') renderActivityChart(data.activity);
-        }
-
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700" rel="stylesheet">
@@ -1444,6 +1417,14 @@
 
                 
 
+        function updateDashboard(data) {
+            console.log('📊 AZ-V8-SYNTAX-FIX Updating Dashboard:', data);
+            const rank = data.bite_rank || "Fair";
+            const prob = data.bite_probability || 50;
+            const biteElem = document.getElementById("biteProbability");
+            if (biteElem) biteElem.textContent = rank;
+            const scoreLabel = document.querySelector(".bg-blue-600 .text-xs.font-bold");
+            if (scoreLabel) scoreLabel.textContent = prob + "% Probability";
             // 2. Update 12-hour forecast chart
             if (data.forecast_12h) {
                 updateForecastChart(data.forecast_12h);
