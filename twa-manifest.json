@@ -4,20 +4,51 @@
   "name": "FishSmart Pro",
   "launcherName": "FishSmart",
   "display": "standalone",
-  "themeColor": "#00d4ff",
-  "navigationColor": "#0a0e27",
-  "backgroundColor": "#0a0e27",
+  "themeColor": "#0A0E27",
+  "themeColorDark": "#000000",
+  "navigationColor": "#000000",
+  "navigationColorDark": "#000000",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#0A0E27",
   "enableNotifications": true,
   "startUrl": "/",
   "iconUrl": "https://fishsmartpro-pwa.onrender.com/icon.png",
   "maskableIconUrl": "https://fishsmartpro-pwa.onrender.com/icon.png",
   "splashScreenFadeOutDuration": 300,
   "signingKey": {
-    "path": "./fishsmart-pro-key.keystore",
+    "path": "/a0/usr/projects/FishSmart Pro-PWA/.a0proj/workDir/android.keystore",
     "alias": "fishsmart-pro-alias"
   },
+  "appVersionName": "1",
   "appVersionCode": 1,
-  "appVersionName": "2.0.0",
   "shortcuts": [],
-  "generatorApp": "bubblewrap-cli"
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://fishsmartpro-pwa.onrender.com/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "playBilling": {
+      "enabled": true
+    },
+    "locationDelegation": {
+      "enabled": true
+    }
+  },
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://fishsmartpro-pwa.onrender.com/",
+  "minSdkVersion": 21,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "protocolHandlers": [],
+  "fileHandlers": [],
+  "launchHandlerClientMode": "",
+  "displayOverride": [],
+  "appVersion": "1"
 }

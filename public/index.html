@@ -889,6 +889,119 @@
         .mt-20 {
             margin-top: 20px;
         }
+§§include(/tmp/sub_css.txt)
+    
+        /* ============================================
+           SUBSCRIPTION & PREMIUM STYLES
+           ============================================ */
+
+        .btn-pro {
+            background: var(--gradient-purple);
+            color: white !important;
+            box-shadow: var(--shadow-glow);
+            border: none;
+            margin-top: 15px;
+        }
+
+        .btn-pro:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(123, 104, 238, 0.6);
+        }
+
+        .pro-badge {
+            background: var(--gradient-purple);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            font-weight: 800;
+            margin-left: 10px;
+            text-transform: uppercase;
+            display: none;
+        }
+
+        body.pro-active .pro-badge {
+            display: inline-block;
+        }
+
+        body.pro-active .btn-pro {
+            display: none;
+        }
+
+        /* Subscription Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .sub-modal {
+            background: var(--primary-medium);
+            border: 2px solid var(--accent-purple);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 0 50px rgba(123, 104, 238, 0.3);
+        }
+
+        .sub-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .sub-plan-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--accent-purple);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .sub-price {
+            font-size: 2.5rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--accent-pink);
+            margin: 10px 0;
+        }
+
+        .pro-locked-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 15px;
+        }
+
+        body.pro-active .pro-locked-overlay {
+            display: none;
+        }
+
     </style>
 
     <!-- PWA Meta Tags -->
@@ -910,6 +1023,7 @@
                 <div>
                     <div class="logo-text">FISHSMART PRO</div>
                     <div class="logo-badge">Advanced Intelligence</div>
+                    <span class="pro-badge">PRO Member</span>
                 </div>
             </div>
 
@@ -970,6 +1084,7 @@
             </details>
 
             <!-- Action Buttons -->
+            <button class="btn btn-pro" id="goProBtn">🚀 Upgrade to Pro</button>
             <button class="btn btn-primary" id="generateBtn">
                 Generate Master Plan
             </button>
@@ -1106,6 +1221,14 @@
                 <div class="chart-container mb-20">
                     <h3 class="info-card-title">📈 12-Hour Activity Forecast</h3>
                     <canvas id="activityChart"></canvas>
+
+                    <div class="pro-locked-overlay" id="chartLock">
+                        <div style="font-size: 2rem; margin-bottom: 10px;">🔒</div>
+                        <h4 style="font-family: 'Orbitron', sans-serif; color: var(--accent-purple);">Pro Feature Required</h4>
+                        <p style="font-size: 0.8rem; color: var(--text-secondary);">Unlock the 12-hour activity forecast with FishSmart Pro</p>
+                        <button class="btn btn-pro" style="width: auto; padding: 10px 20px; font-size: 0.7rem; margin-top: 15px;" onclick="document.getElementById('subModal').classList.add('active')">Upgrade Now</button>
+                    </div>
+
                 </div>
 
                 <!-- Safety Card (Moved to bottom) -->
@@ -1131,6 +1254,78 @@
         // ============================================
 
         // Application State
+§§include(/tmp/sub_js.txt)
+        
+        /* ============================================
+           GOOGLE PLAY BILLING & SUBSCRIPTION LOGIC
+           ============================================ */
+
+        const BILLING_CONFIG = {
+            sku: 'fishsmart_pro_monthly',
+            serviceUrl: 'https://play.google.com/billing'
+        };
+
+        const billingState = {
+            isPro: localStorage.getItem('fishsmart_pro_active') === 'true',
+            service: null
+        };
+
+        async function initBilling() {
+            if (!('getDigitalGoodsService' in window)) {
+                console.log('ℹ️ Digital Goods API not available (Non-TWA environment).');
+                return;
+            }
+
+            try {
+                billingState.service = await window.getDigitalGoodsService(BILLING_CONFIG.serviceUrl);
+                console.log('✅ Connected to Google Play Billing Service');
+
+                const details = await billingState.service.listPurchases();
+                for (const purchase of details) {
+                    if (purchase.itemId === BILLING_CONFIG.sku) {
+                        activateProMode();
+                        break;
+                    }
+                }
+            } catch (err) {
+                console.error('❌ Billing Init Error:', err);
+            }
+        }
+
+        async function subscribeToPro() {
+            if (!billingState.service) {
+                showError('Subscription only available in the Android App.');
+                return;
+            }
+
+            try {
+                const paymentMethods = [{
+                    supportedMethods: 'https://play.google.com/billing',
+                    data: { sku: BILLING_CONFIG.sku }
+                }];
+
+                const request = new PaymentRequest(paymentMethods);
+                const response = await request.show();
+
+                await billingState.service.acknowledge(response.details.purchaseToken, 'repeatable');
+                await response.complete('success');
+
+                activateProMode();
+                elements.subModal.classList.remove('active');
+                alert('Welcome to FishSmart Pro Premium! 🚀');
+            } catch (err) {
+                console.error('❌ Subscription Failed:', err);
+                showError('Transaction cancelled or failed.');
+            }
+        }
+
+        function activateProMode() {
+            billingState.isPro = true;
+            localStorage.setItem('fishsmart_pro_active', 'true');
+            document.body.classList.add('pro-active');
+            console.log('💎 Pro Mode Activated');
+        }
+
         const state = {
             chart: null,
             isGenerating: false
@@ -1164,7 +1359,11 @@
             mapLink: document.getElementById('mapLink'),
             moonPhase: document.getElementById('moonPhase'),
             solunarAssessment: document.getElementById('solunarAssessment'),
-            activityChart: document.getElementById('activityChart')
+            activityChart: document.getElementById('activityChart'),
+            goProBtn: document.getElementById('goProBtn'),
+            subModal: document.getElementById('subModal'),
+            closeSubModal: document.getElementById('closeSubModal'),
+            subscribeBtn: document.getElementById('subscribeBtn')
         };
 
         // ============================================
@@ -1175,6 +1374,8 @@
             updateSystemTime();
             setInterval(updateSystemTime, 1000);
             setupEventListeners();
+            initBilling();
+            if (billingState.isPro) activateProMode();
             console.log('🎣 FishSmart Pro initialized');
         }
 
@@ -1195,6 +1396,11 @@
         }
 
         function setupEventListeners() {
+
+            if (elements.goProBtn) elements.goProBtn.addEventListener('click', () => elements.subModal.classList.add('active'));
+            if (elements.closeSubModal) elements.closeSubModal.addEventListener('click', () => elements.subModal.classList.remove('active'));
+            if (elements.subscribeBtn) elements.subscribeBtn.addEventListener('click', subscribeToPro);
+
             elements.generateBtn.addEventListener('click', handleGenerate);
             if (elements.refreshBtn) {
                 elements.refreshBtn.addEventListener('click', handleRefresh);
@@ -1628,5 +1834,24 @@
         }
     </script>
 
+    <!-- Subscription Modal -->
+    <div class="modal-overlay" id="subModal">
+        <div class="sub-modal">
+            <span class="sub-modal-close" id="closeSubModal">×</span>
+            <div style="font-size: 3rem; margin-bottom: 20px;">💎</div>
+            <h2 class="welcome-title">FishSmart Pro Premium</h2>
+            <p class="welcome-text">Unlock advanced scientific insights and 12-hour predictive activity forecasting.</p>
+            <div class="sub-plan-card">
+                <div class="weather-label">Monthly Access</div>
+                <div class="sub-price">$4.99</div>
+                <ul style="text-align: left; margin: 20px 0; color: var(--text-secondary);">
+                    <li>🚀 12-Hour Activity Forecasting</li>
+                    <li>📉 Detailed Pressure Trend Analysis</li>
+                    <li>🧪 Enhanced AI Strategic Insights</li>
+                </ul>
+            </div>
+            <button class="btn btn-pro" id="subscribeBtn">Subscribe Now</button>
+        </div>
+    </div>
 </body>
 </html>
