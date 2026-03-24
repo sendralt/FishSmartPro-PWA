@@ -779,6 +779,16 @@ app.get('/health', (req, res) => {
 });
 
 // Generate strategy endpoint
+
+// Legal Document Routes
+app.get('/PRIVACY.md', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'PRIVACY.md'));
+});
+
+app.get('/ABOUT.md', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'ABOUT.md'));
+});
+
 app.post('/api/generate', async (req, res) => {
     const { location, species, clarity, engine, isBoat, currentTime } = req.body;
 
