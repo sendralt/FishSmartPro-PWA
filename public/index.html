@@ -1217,6 +1217,13 @@
                     </div>
                 </div>
 
+                
+                <!-- Weather Forecast Chart -->
+                <div class="chart-container mb-20">
+                    <h3 class="info-card-title">🌡️ 12-Hour Weather Forecast</h3>
+                    <canvas id="forecastChart"></canvas>
+                </div>
+
                 <!-- Activity Chart -->
                 <div class="chart-container mb-20">
                     <h3 class="info-card-title">📈 12-Hour Activity Forecast</h3>
@@ -1360,6 +1367,7 @@
             moonPhase: document.getElementById('moonPhase'),
             solunarAssessment: document.getElementById('solunarAssessment'),
             activityChart: document.getElementById('activityChart'),
+            forecastChart: document.getElementById('forecastChart'),
             goProBtn: document.getElementById('goProBtn'),
             subModal: document.getElementById('subModal'),
             closeSubModal: document.getElementById('closeSubModal'),
@@ -1566,8 +1574,12 @@
             }
         }
 
+        
         function updateForecastChart(forecast) {
-            const ctx = document.getElementById('activityChart').getContext('2d');
+            const canvas = elements.forecastChart;
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
             const labels = forecast.map(f => {
                 const date = new Date(f.time);
                 return date.getHours() % 12 || 12 + (date.getHours() >= 12 ? ' PM' : ' AM');
@@ -1575,9 +1587,59 @@
             const temps = forecast.map(f => f.temp);
             const pressures = forecast.map(f => f.pressure);
 
-            if (state.chart) {
-                state.chart.destroy();
+            if (state.forecastInstance) {
+                state.forecastInstance.destroy();
             }
+
+            state.forecastInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Temp (°F)',
+                        data: temps,
+                        borderColor: '#ff9d00',
+                        backgroundColor: 'rgba(255, 157, 0, 0.1)',
+                        borderWidth: 3,
+                        yAxisID: 'y',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Pressure (hPa)',
+                        data: pressures,
+                        borderColor: '#00d4ff',
+                        backgroundColor: 'rgba(0, 212, 255, 0.05)',
+                        borderWidth: 3,
+                        yAxisID: 'y1',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    scales: {
+                        y: {
+                            type: 'linear', display: true, position: 'left',
+                            title: { display: true, text: 'Temp (°F)', color: '#ff9d00' },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#ff9d00' }
+                        },
+                        y1: {
+                            type: 'linear', display: true, position: 'right',
+                            title: { display: true, text: 'Pressure (hPa)', color: '#00d4ff' },
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#00d4ff' }
+                        },
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888' } }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#fff', font: { family: 'Rajdhani' } } }
+                    }
+                }
+            });
+        }
 
             state.chart = new Chart(ctx, {
                 type: 'line',
@@ -1640,6 +1702,7 @@
             // 2. Update 12-hour forecast chart
             if (data.forecast_12h) {
                 updateForecastChart(data.forecast_12h);
+                if (data.activity_levels) renderActivityChart(data.activity_levels);
             }
 
             // 3. Update weather
