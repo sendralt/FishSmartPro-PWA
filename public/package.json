@@ -1,0 +1,31 @@
+{
+  "name": "fishsmart-pro",
+  "version": "2.0.0",
+  "description": "Advanced AI-powered fishing intelligence platform with deep ocean tech aesthetic",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "fishing",
+    "ai",
+    "weather",
+    "marine",
+    "intelligence"
+  ],
+  "author": "FishSmart Team",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "axios": "^1.13.6",
+    "cors": "^2.8.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
