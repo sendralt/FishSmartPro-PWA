@@ -20,15 +20,15 @@ This document outlines every step needed to transition **FishSmart Pro** from it
 - [ ] **Update Web Manifest**: Add the generated screenshots to the `screenshots` array in `public/manifest.json` to enable the 'Rich Install UI' for users visiting the site directly.
 
 ## 📦 Phase 3: Android Build (Packaging the PWA)
-- [ ] **Install Bubblewrap**: `npm install -g @bubblewrap/cli` on your local development machine.
-- [ ] **Initialize Android Project**: Run `bubblewrap init --manifest twa-manifest.json` in your project root.
-- [ ] **Generate Signing Key**: Create a keystore during the `init` process (keep the password safe!).
-- [ ] **Build App Bundle**: Run `bubblewrap build` to create your `app-release.aab` file.
-- [ ] **Retrieve Fingerprint**: Run `bubblewrap fingerprint` to get your **SHA-256 certificate fingerprint**.
+- [x] **Install Bubblewrap**: `npm install -g @bubblewrap/cli` on your local development machine.
+- [x] **Initialize Android Project**: Run `bubblewrap init --manifest twa-manifest.json` in your project root.
+- [x] **Generate Signing Key**: Create a keystore during the `init` process (keep the password safe!).
+- [x] **Build App Bundle**: Run `bubblewrap build` to create your `app-release.aab` file.
+- [x] **Retrieve Fingerprint**: Run `bubblewrap fingerprint` to get your **SHA-256 certificate fingerprint**.
 
 ## 🔑 Phase 4: Final Verification
-- [ ] **Update Asset Links**: Replace the placeholder in `public/.well-known/assetlinks.json` with the real SHA-256 fingerprint from Phase 3.
-- [ ] **Redeploy**: Push the updated `assetlinks.json` to the live server.
+- [x] **Update Asset Links**: Replace the placeholder in `public/.well-known/assetlinks.json` with the real SHA-256 fingerprint from Phase 3.
+- [x] **Redeploy**: Push the updated `assetlinks.json` to the live server.
 - [ ] **Test Native Experience**: Install the app. If the browser address bar is gone, verification was successful.
 
 ## 🏛️ Phase 5: Google Play Console Submission

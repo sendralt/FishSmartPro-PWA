@@ -413,7 +413,7 @@ function cloudCoverToIconCode(cloudCover) {
  * @returns {Promise<Object>} Generated strategy data
  */
 async function generateFishingStrategy(params) {
-    const { location, species, clarity, engine, isBoat, currentTime } = params;
+    const { location, species, clarity, engine, isBoat, currentTime, isPro } = params;
 
     // Fetch weather data for context
     const weather = await getWeatherData(location);
@@ -460,6 +460,26 @@ async function generateFishingStrategy(params) {
 		        let responseJson;
 		        try {
 		            responseJson = JSON.parse(rawText);
+        // Freemium Gatekeeping
+        if (!isPro) {
+            // 1. Limit Lures: Only return the first category name, no specific lures/scores
+            if (Array.isArray(responseJson.recommended_lures)) {
+                responseJson.recommended_lures = responseJson.recommended_lures.slice(0, 1).map(l => ({
+                    name: l.category || "Standard Lure",
+                    reason: "Upgrade to Pro to see specific lure rankings."
+                }));
+            }
+
+            // 2. The Wall: Lock specific tactical adjustments if trend is significant
+            if (responseJson.strategy && responseJson.strategy.length > 100) {
+                responseJson.strategy = responseJson.strategy.substring(0, 150) + 
+                    "... [TACTICAL ADJUSTMENT LOCKED] Upgrade to Pro to see how to adjust for the current pressure trend.";
+            }
+
+            // 3. Clear forecast data for free users (UI handles the lock overlay)
+            // but we keep it ephemerally for the Bite Score calculation
+        }
+
 		        } catch (err) {
 		            console.error('Gemini JSON parse error:', err.message);
 		            throw new Error('AI response could not be parsed');

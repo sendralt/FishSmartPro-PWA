@@ -1037,7 +1037,7 @@
                 <label class="form-label" for="species">Target Species</label>
                 <select id="species" class="form-select">
                     <option value="Largemouth Bass">Largemouth Bass</option>
-                    <option value="Smallmouth Bass">Smallmouth Bass</option>
+                    <option value="Smallmouth Bass">Smallmouth Bass (Pro)</option>
                     <option value="Walleye">Walleye</option>
                     <option value="Northern Pike">Northern Pike</option>
                     <option value="Crappie">Crappie</option>
@@ -1046,13 +1046,13 @@
                     <option value="Bluegill">Bluegill</option>
                     <option value="Yellow Perch">Yellow Perch</option>
                     <option value="White Bass">White Bass</option>
-                    <option value="Striped Bass">Striped Bass</option>
+                    <option value="Striped Bass">Striped Bass (Pro)</option>
                     <option value="Brown Trout">Brown Trout</option>
-                    <option value="Steelhead">Steelhead</option>
-                    <option value="Salmon">Salmon</option>
-                    <option value="Saugeye">Saugeye</option>
+                    <option value="Steelhead">Steelhead (Pro)</option>
+                    <option value="Salmon">Salmon (Pro)</option>
+                    <option value="Saugeye">Saugeye (Pro)</option>
                     <option value="Brook Trout">Brook Trout</option>
-                    <option value="Muskellunge">Muskellunge</option>
+                    <option value="Muskellunge">Muskellunge (Pro)</option>
                     <option value="Rainbow Trout">Rainbow Trout</option>
                     <option value="Bullhead">Bullhead</option>
                     <option value="Channel Catfish">Channel Catfish</option>
@@ -1493,6 +1493,14 @@
         // ============================================
 
         async function handleGenerate() {
+            // Freemium Gatekeeping: Check for Pro Species
+            const selectedSpecies = elements.species.value;
+            const isProSpecies = selectedSpecies.includes('(Pro)');
+            if (isProSpecies && !billingState.isPro) {
+                elements.subModal.classList.add('active');
+                return;
+            }
+
             if (state.isGenerating) return;
 
             const location = elements.location.value.trim();
@@ -1528,6 +1536,7 @@
                         clarity: elements.clarity.value,
                         engine: 'gemini-3-flash-preview',
                         isBoat: elements.boat.checked,
+                        isPro: billingState.isPro,
                         currentTime: new Date().toLocaleString()
                     })
                 });
