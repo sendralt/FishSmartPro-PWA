@@ -871,9 +871,17 @@
         };
 
         function init() {
+            console.log('Initializing application...');
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not defined! Retrying in 500ms...');
+                setTimeout(init, 500);
+                return;
+            }
+            console.log('Chart.js verified. Proceeding with startup.');
             updateSystemTime();
             setInterval(updateSystemTime, 1000);
             setupEventListeners();
+            console.log('🎣 FishSmart Pro initialized');
         }
 
         function updateSystemTime() {
@@ -988,6 +996,12 @@
         }
 
         function renderActivityChart(dataPoints) {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart library missing during render call.');
+                showError('Data visualization library not available. Please refresh the page.');
+                return;
+            }
+
             const ctx = elements.activityChart.getContext('2d');
             if (state.chart) state.chart.destroy();
 
