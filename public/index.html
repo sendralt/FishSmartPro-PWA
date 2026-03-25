@@ -1317,7 +1317,7 @@
 
                 activateProMode();
                 elements.subModal.classList.remove('active');
-                alert('Welcome to FishSmart Pro Premium! 🚀');
+                alert('Welcome to FishSmart Pro Premium! \u1f680');
             } catch (err) {
                 console.error('\\u274c Subscription Failed:', err);
                 showError('Transaction cancelled or failed.');
@@ -1328,7 +1328,7 @@
             billingState.isPro = true;
             localStorage.setItem('fishsmart_pro_active', 'true');
             document.body.classList.add('pro-active');
-            console.log('💎 Pro Mode Activated');
+            console.log('\u1f48e Pro Mode Activated');
         }
 
                 const state = {
@@ -1385,12 +1385,12 @@
             // Google Reviewer Bypass
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get('reviewer') === 'true') {
-                console.log('\ud83d\udee1️ Reviewer Mode Activated');
+                console.log('\ud83d\udee1\ufe0f Reviewer Mode Activated');
                 activateProMode();
             }
 
             if (billingState.isPro) activateProMode();
-            console.log('🎣 FishSmart Pro initialized');
+            console.log('\u1f3a3 FishSmart Pro initialized');
         }
 
         function updateSystemTime() {
@@ -1406,7 +1406,7 @@
                 month: 'short',
                 day: 'numeric'
             });
-            elements.systemTime.textContent = `${dateStr} • ${timeStr}`;
+            elements.systemTime.textContent = `${dateStr} \u2022 ${timeStr}`;
         }
 
         function setupEventListeners() {
@@ -1429,7 +1429,7 @@
             });
 
             // Diagnostic logging: verify control presence and initial dashboard visibility
-            console.log('🧪 Diagnostics: controls present', {
+            console.log('\u1f9ea Diagnostics: controls present', {
                 generateBtn: !!elements.generateBtn,
                 refreshBtn: !!elements.refreshBtn,
                 newPlanBtnTop: !!elements.newPlanBtnTop,
@@ -1437,7 +1437,7 @@
                 welcomeScreen: !!elements.welcomeScreen,
                 loadingScreen: !!elements.loadingScreen
             });
-            console.log('🧪 Diagnostics: initial dashboard state', {
+            console.log('\u1f9ea Diagnostics: initial dashboard state', {
                 classList: elements.resultsDashboard.className,
                 hasActiveClass: elements.resultsDashboard.classList.contains('active'),
                 computedDisplay: window.getComputedStyle(elements.resultsDashboard).display
@@ -1449,8 +1449,8 @@
         }
 
         function handleRefresh() {
-            console.log('🔄 Refreshing Analysis...');
-            console.log('🧪 Diagnostics: refresh button clicked');
+            console.log('\u1f504 Refreshing Analysis...');
+            console.log('\u1f9ea Diagnostics: refresh button clicked');
             handleGenerate();
         }
 
@@ -1468,7 +1468,7 @@
             elements.loadingScreen.classList.remove('active');
             hideError();
 
-            console.log('🧪 Diagnostics: after handleNewPlan UI state', {
+            console.log('\u1f9ea Diagnostics: after handleNewPlan UI state', {
                 welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
                 resultsActive: elements.resultsDashboard.classList.contains('active'),
                 resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
@@ -1478,7 +1478,7 @@
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
             
-            console.log('🔄 New Plan started - Form reset');
+            console.log('\u1f504 New Plan started - Form reset');
         }
 
         function updateWeatherWidget(weather) {
@@ -1516,7 +1516,7 @@
             elements.resultsDashboard.classList.remove('active');
             hideError();
 
-            console.log('🧪 Diagnostics: handleGenerate start UI state', {
+            console.log('\u1f9ea Diagnostics: handleGenerate start UI state', {
                 loadingActive: elements.loadingScreen.classList.contains('active'),
                 welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
                 resultsActive: elements.resultsDashboard.classList.contains('active'),
@@ -1554,7 +1554,7 @@
                 elements.loadingScreen.classList.remove('active');
                 elements.resultsDashboard.classList.add('active');
 
-                console.log('🧪 Diagnostics: generation success UI state', {
+                console.log('\u1f9ea Diagnostics: generation success UI state', {
                     loadingActive: elements.loadingScreen.classList.contains('active'),
                     welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
                     resultsActive: elements.resultsDashboard.classList.contains('active'),
@@ -1564,14 +1564,14 @@
                 });
 
             } catch (error) {
-                console.error('🧪 Diagnostics: generation failed', {
+                console.error('\u1f9ea Diagnostics: generation failed', {
                     message: error?.message || String(error)
                 });
                 showError(error.message);
                 elements.loadingScreen.classList.remove('active');
                 elements.welcomeScreen.classList.remove('hidden');
 
-                console.log('🧪 Diagnostics: generation failure UI state', {
+                console.log('\u1f9ea Diagnostics: generation failure UI state', {
                     loadingActive: elements.loadingScreen.classList.contains('active'),
                     welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
                     resultsActive: elements.resultsDashboard.classList.contains('active'),
@@ -1582,7 +1582,7 @@
                 state.isGenerating = false;
                 elements.generateBtn.disabled = false;
 
-                console.log('🧪 Diagnostics: handleGenerate finally', {
+                console.log('\u1f9ea Diagnostics: handleGenerate finally', {
                     isGenerating: state.isGenerating,
                     generateBtnDisabled: elements.generateBtn.disabled
                 });
@@ -1732,7 +1732,7 @@
         }
 
         function updateDashboard(data) {
-            console.log('📊 V9-DUAL-AXIS-ACTIVE Updating Dashboard:', data);
+            console.log('\u1f4ca V9-DUAL-AXIS-ACTIVE Updating Dashboard:', data);
             const rank = data.bite_rank || "Fair";
             const prob = data.bite_probability || 50;
             const biteElem = document.getElementById("biteProbability");
@@ -1782,15 +1782,15 @@
 
         function getMoonPhaseIcon(phase) {
             const phaseLower = phase.toLowerCase();
-            if (phaseLower.includes('full')) return '🌕';
-            if (phaseLower.includes('new')) return '🌑';
-            if (phaseLower.includes('first quarter')) return '🌓';
-            if (phaseLower.includes('last quarter')) return '🌗';
-            if (phaseLower.includes('waxing crescent')) return '🌒';
-            if (phaseLower.includes('waxing gibbous')) return '🌔';
-            if (phaseLower.includes('waning crescent')) return '🌘';
-            if (phaseLower.includes('waning gibbous')) return '🌖';
-            return '🌙';
+            if (phaseLower.includes('full')) return '\u1f315';
+            if (phaseLower.includes('new')) return '\u1f311';
+            if (phaseLower.includes('first quarter')) return '\u1f313';
+            if (phaseLower.includes('last quarter')) return '\u1f317';
+            if (phaseLower.includes('waxing crescent')) return '\u1f312';
+            if (phaseLower.includes('waxing gibbous')) return '\u1f314';
+            if (phaseLower.includes('waning crescent')) return '\u1f318';
+            if (phaseLower.includes('waning gibbous')) return '\u1f316';
+            return '\u1f319';
         }
 
         
@@ -1919,7 +1919,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/sw_v9.js?v=99')
-                    .then(reg => console.log('🚀 Service Worker registered:', reg.scope))
+                    .then(reg => console.log('\u1f680 Service Worker registered:', reg.scope))
                     .catch(err => console.error('\\u274c Service Worker registration failed:', err));
             });
         }
