@@ -1,1 +1,11 @@
-node_modules/\n.gradle/\nbuild/\napp/build/\n*.apk\n*.aab\n*.idsig\n*.keystore\n.env\nserver.log\npackage-lock.json
+node_modules/
+.gradle/
+build/
+app/build/
+*.apk
+*.aab
+*.idsig
+*.keystore
+.env
+server.log
+package-lock.json
