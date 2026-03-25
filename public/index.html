@@ -7,7 +7,7 @@
     <title>FishSmart Pro | Advanced Fishing Intelligence</title>
     
     <!-- External Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700" rel="stylesheet">
@@ -1040,22 +1040,22 @@
                     <option value="Smallmouth Bass">Smallmouth Bass (Pro)</option>
                     <option value="Walleye">Walleye</option>
                     <option value="Northern Pike">Northern Pike</option>
-                    <option value="Crappie">Crappie</option>
-                    <option value="Trout">Trout</option>
-                    <option value="Catfish">Catfish</option>
-                    <option value="Bluegill">Bluegill</option>
-                    <option value="Yellow Perch">Yellow Perch</option>
-                    <option value="White Bass">White Bass</option>
+                    <option value="Crappie">Crappie (Pro)</option>
+                    <option value="Trout">Trout (Pro)</option>
+                    <option value="Catfish">Catfish (Pro)</option>
+                    <option value="Bluegill">Bluegill (Pro)</option>
+                    <option value="Yellow Perch">Yellow Perch (Pro)</option>
+                    <option value="White Bass">White Bass (Pro)</option>
                     <option value="Striped Bass">Striped Bass (Pro)</option>
-                    <option value="Brown Trout">Brown Trout</option>
+                    <option value="Brown Trout">Brown Trout (Pro)</option>
                     <option value="Steelhead">Steelhead (Pro)</option>
                     <option value="Salmon">Salmon (Pro)</option>
                     <option value="Saugeye">Saugeye (Pro)</option>
-                    <option value="Brook Trout">Brook Trout</option>
+                    <option value="Brook Trout">Brook Trout (Pro)</option>
                     <option value="Muskellunge">Muskellunge (Pro)</option>
-                    <option value="Rainbow Trout">Rainbow Trout</option>
-                    <option value="Bullhead">Bullhead</option>
-                    <option value="Channel Catfish">Channel Catfish</option>
+                    <option value="Rainbow Trout">Rainbow Trout (Pro)</option>
+                    <option value="Bullhead">Bullhead (Pro)</option>
+                    <option value="Channel Catfish">Channel Catfish (Pro)</option>
                 </select>
             </div>
 
@@ -1254,676 +1254,9 @@
         </main>
     </div>
 
-    <script>
-        // ============================================
-        // FISHSMART PRO - CLIENT-SIDE APPLICATION
-        // ============================================
+    
 
-        // Application State
-        
-        /* ============================================
-           GOOGLE PLAY BILLING & SUBSCRIPTION LOGIC
-           ============================================ */
-
-        const BILLING_CONFIG = {
-            sku: 'fishsmart_pro_monthly',
-            serviceUrl: 'https://play.google.com/billing'
-        };
-
-        const billingState = {
-            isPro: localStorage.getItem('fishsmart_pro_active') === 'true',
-            service: null
-        };
-
-        async function initBilling() {
-            if (!('getDigitalGoodsService' in window)) {
-                console.log('\\u2139\\ufe0f Digital Goods API not available (Non-TWA environment).');
-                return;
-            }
-
-            try {
-                billingState.service = await window.getDigitalGoodsService(BILLING_CONFIG.serviceUrl);
-                console.log('\\u2705 Connected to Google Play Billing Service');
-
-                const details = await billingState.service.listPurchases();
-                for (const purchase of details) {
-                    if (purchase.itemId === BILLING_CONFIG.sku) {
-                        activateProMode();
-                        break;
-                    }
-                }
-            } catch (err) {
-                console.error('\\u274c Billing Init Error:', err);
-            }
-        }
-
-        async function subscribeToPro() {
-            if (!billingState.service) {
-                showError('Subscription only available in the Android App.');
-                return;
-            }
-
-            try {
-                const paymentMethods = [{
-                    supportedMethods: 'https://play.google.com/billing',
-                    data: { sku: BILLING_CONFIG.sku }
-                }];
-
-                const request = new PaymentRequest(paymentMethods);
-                const response = await request.show();
-
-                await billingState.service.acknowledge(response.details.purchaseToken, 'repeatable');
-                await response.complete('success');
-
-                activateProMode();
-                elements.subModal.classList.remove('active');
-                alert('Welcome to FishSmart Pro Premium! \u1f680');
-            } catch (err) {
-                console.error('\\u274c Subscription Failed:', err);
-                showError('Transaction cancelled or failed.');
-            }
-        }
-
-        function activateProMode() {
-            billingState.isPro = true;
-            localStorage.setItem('fishsmart_pro_active', 'true');
-            document.body.classList.add('pro-active');
-            console.log('\u1f48e Pro Mode Activated');
-        }
-
-                const state = {
-            forecastInstance: null,
-            activityInstance: null,
-            isGenerating: false
-        };
-
-        // DOM Elements
-        const elements = {
-            location: document.getElementById('location'),
-            species: document.getElementById('species'),
-            clarity: document.getElementById('clarity'),
-            boat: document.getElementById('boat'),
-            boatCheckbox: document.getElementById('boatCheckbox'),
-            generateBtn: document.getElementById('generateBtn'),
-            refreshBtn: document.getElementById('refreshBtn'),
-            newPlanBtnTop: document.getElementById('newPlanBtnTop'),
-            welcomeScreen: document.getElementById('welcomeScreen'),
-            loadingScreen: document.getElementById('loadingScreen'),
-            resultsDashboard: document.getElementById('resultsDashboard'),
-            errorMessage: document.getElementById('errorMessage'),
-            errorText: document.getElementById('errorText'),
-            systemTime: document.getElementById('systemTime'),
-            // Weather elements
-            wttrTemp: document.getElementById('wttrTemp'),
-            wttrWind: document.getElementById('wttrWind'),
-            wttrPressure: document.getElementById('wttrPressure'),
-            wttrHumidity: document.getElementById('wttrHumidity'),
-            // Content elements
-            strategyContent: document.getElementById('strategyContent'),
-            safetyContent: document.getElementById('safetyContent'),
-            intelContent: document.getElementById('intelContent'),
-            mapLink: document.getElementById('mapLink'),
-            moonPhase: document.getElementById('moonPhase'),
-            solunarAssessment: document.getElementById('solunarAssessment'),
-            activityChart: document.getElementById('activityChart'),
-            forecastChart: document.getElementById('forecastChart'),
-            goProBtn: document.getElementById('goProBtn'),
-            subModal: document.getElementById('subModal'),
-            closeSubModal: document.getElementById('closeSubModal'),
-            subscribeBtn: document.getElementById('subscribeBtn')
-        };
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-
-        function init() {
-            updateSystemTime();
-            setInterval(updateSystemTime, 1000);
-            setupEventListeners();
-            initBilling();
-            // Google Reviewer Bypass
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('reviewer') === 'true') {
-                console.log('\ud83d\udee1\ufe0f Reviewer Mode Activated');
-                activateProMode();
-            }
-
-            if (billingState.isPro) activateProMode();
-            console.log('\u1f3a3 FishSmart Pro initialized');
-        }
-
-        function updateSystemTime() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('en-US', { 
-                hour12: true, 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            const dateStr = now.toLocaleDateString('en-US', {
-                weekday: 'short',
-                month: 'short',
-                day: 'numeric'
-            });
-            elements.systemTime.textContent = `${dateStr} \u2022 ${timeStr}`;
-        }
-
-        function setupEventListeners() {
-
-            if (elements.goProBtn) elements.goProBtn.addEventListener('click', () => elements.subModal.classList.add('active'));
-            if (elements.closeSubModal) elements.closeSubModal.addEventListener('click', () => elements.subModal.classList.remove('active'));
-            if (elements.subscribeBtn) elements.subscribeBtn.addEventListener('click', subscribeToPro);
-
-            elements.generateBtn.addEventListener('click', handleGenerate);
-            if (elements.refreshBtn) {
-                elements.refreshBtn.addEventListener('click', handleRefresh);
-            }
-            if (elements.newPlanBtnTop) {
-                elements.newPlanBtnTop.addEventListener('click', handleNewPlan);
-            }
-            elements.boat.addEventListener('change', handleBoatToggle);
-            elements.boatCheckbox.addEventListener('click', () => {
-                elements.boat.checked = !elements.boat.checked;
-                elements.boatCheckbox.classList.toggle('checked', elements.boat.checked);
-            });
-
-            // Diagnostic logging: verify control presence and initial dashboard visibility
-            console.log('\u1f9ea Diagnostics: controls present', {
-                generateBtn: !!elements.generateBtn,
-                refreshBtn: !!elements.refreshBtn,
-                newPlanBtnTop: !!elements.newPlanBtnTop,
-                resultsDashboard: !!elements.resultsDashboard,
-                welcomeScreen: !!elements.welcomeScreen,
-                loadingScreen: !!elements.loadingScreen
-            });
-            console.log('\u1f9ea Diagnostics: initial dashboard state', {
-                classList: elements.resultsDashboard.className,
-                hasActiveClass: elements.resultsDashboard.classList.contains('active'),
-                computedDisplay: window.getComputedStyle(elements.resultsDashboard).display
-            });
-        }
-
-        function handleBoatToggle() {
-            elements.boatCheckbox.classList.toggle('checked', elements.boat.checked);
-        }
-
-        function handleRefresh() {
-            console.log('\u1f504 Refreshing Analysis...');
-            console.log('\u1f9ea Diagnostics: refresh button clicked');
-            handleGenerate();
-        }
-
-        function handleNewPlan() {
-            // Reset form fields
-            elements.location.value = 'Lake Erie, Ohio';
-            elements.species.selectedIndex = 0;
-            elements.clarity.value = 'Clear';
-            elements.boat.checked = true;
-            elements.boatCheckbox.classList.add('checked');
-
-            // Reset UI state
-            elements.welcomeScreen.classList.remove('hidden');
-            elements.resultsDashboard.classList.remove('active');
-            elements.loadingScreen.classList.remove('active');
-            hideError();
-
-            console.log('\u1f9ea Diagnostics: after handleNewPlan UI state', {
-                welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
-                resultsActive: elements.resultsDashboard.classList.contains('active'),
-                resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
-                loadingActive: elements.loadingScreen.classList.contains('active')
-            });
-
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            console.log('\u1f504 New Plan started - Form reset');
-        }
-
-        function updateWeatherWidget(weather) {
-            elements.wttrTemp.textContent = weather.temp ? `${weather.temp}\\u00b0F` : '--';
-            elements.wttrWind.textContent = weather.wind ? `${weather.wind.speed} mph` : '--';
-            elements.wttrPressure.textContent = weather.pressure ? `${weather.pressure} mb` : '--';
-            elements.wttrHumidity.textContent = weather.humidity ? `${weather.humidity}%` : '--';
-        }
-
-        // ============================================
-        // STRATEGY GENERATION
-        // ============================================
-
-        async function handleGenerate() {
-            // Freemium Gatekeeping: Check for Pro Species
-            const selectedSpecies = elements.species.value;
-            const isProSpecies = selectedSpecies.includes('(Pro)');
-            if (isProSpecies && !billingState.isPro) {
-                elements.subModal.classList.add('active');
-                return;
-            }
-
-            if (state.isGenerating) return;
-
-            const location = elements.location.value.trim();
-            if (!location) {
-                showError('Please enter a location');
-                return;
-            }
-
-            state.isGenerating = true;
-            elements.generateBtn.disabled = true;
-            elements.loadingScreen.classList.add('active');
-            elements.welcomeScreen.classList.add('hidden');
-            elements.resultsDashboard.classList.remove('active');
-            hideError();
-
-            console.log('\u1f9ea Diagnostics: handleGenerate start UI state', {
-                loadingActive: elements.loadingScreen.classList.contains('active'),
-                welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
-                resultsActive: elements.resultsDashboard.classList.contains('active'),
-                resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display
-            });
-
-	            try {
-	                // Default to same-origin backend (e.g., http://localhost:3000) unless
-	                // a custom API base URL is explicitly provided (for native/mobile).
-	                const API_BASE_URL = window.API_BASE_URL || '';
-                const response = await fetch(`${API_BASE_URL}/api/generate`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        location,
-                        species: elements.species.value,
-                        clarity: elements.clarity.value,
-                        engine: 'gemini-3-flash-preview',
-                        isBoat: elements.boat.checked,
-                        isPro: billingState.isPro,
-                        currentTime: new Date().toLocaleString()
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.error || 'Failed to generate strategy');
-                }
-
-                // Update all content
-                updateDashboard(data.data);
-                
-                // Show results
-                elements.loadingScreen.classList.remove('active');
-                elements.resultsDashboard.classList.add('active');
-
-                console.log('\u1f9ea Diagnostics: generation success UI state', {
-                    loadingActive: elements.loadingScreen.classList.contains('active'),
-                    welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
-                    resultsActive: elements.resultsDashboard.classList.contains('active'),
-                    resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
-                    refreshBtnVisible: !!elements.refreshBtn && window.getComputedStyle(elements.refreshBtn).display !== 'none',
-                    newPlanBtnTopVisible: !!elements.newPlanBtnTop && window.getComputedStyle(elements.newPlanBtnTop).display !== 'none'
-                });
-
-            } catch (error) {
-                console.error('\u1f9ea Diagnostics: generation failed', {
-                    message: error?.message || String(error)
-                });
-                showError(error.message);
-                elements.loadingScreen.classList.remove('active');
-                elements.welcomeScreen.classList.remove('hidden');
-
-                console.log('\u1f9ea Diagnostics: generation failure UI state', {
-                    loadingActive: elements.loadingScreen.classList.contains('active'),
-                    welcomeHidden: elements.welcomeScreen.classList.contains('hidden'),
-                    resultsActive: elements.resultsDashboard.classList.contains('active'),
-                    resultsDisplay: window.getComputedStyle(elements.resultsDashboard).display,
-                    errorVisible: elements.errorMessage.classList.contains('active')
-                });
-            } finally {
-                state.isGenerating = false;
-                elements.generateBtn.disabled = false;
-
-                console.log('\u1f9ea Diagnostics: handleGenerate finally', {
-                    isGenerating: state.isGenerating,
-                    generateBtnDisabled: elements.generateBtn.disabled
-                });
-            }
-        }
-
-        
-        
-        /* ============================================
-           CHART & DATA VISUALIZATION (V9-FINAL)
-           ============================================ */
-
-        
-        /* ============================================
-           CHART & DATA VISUALIZATION (V9-STABLE)
-           ============================================ */
-
-        
-        /* ============================================
-           CHART & DATA VISUALIZATION (V9-FINAL-STABLE)
-           ============================================ */
-
-        
-        /* ============================================
-           V9 VISUALIZATION ENGINE (DUAL-AXIS STABLE)
-           ============================================ */
-
-        function updateForecastChart(forecast) {
-            const canvas = document.getElementById('forecastChart');
-            if (!canvas || !forecast) return;
-            const ctx = canvas.getContext('2d');
-
-            const labels = forecast.map(f => {
-                const date = new Date(f.time);
-                return date.getHours() % 12 || 12 + (date.getHours() >= 12 ? ' PM' : ' AM');
-            });
-            const temps = forecast.map(f => f.temp);
-            const pressures = forecast.map(f => f.pressure);
-
-            if (state.forecastInstance) {
-                state.forecastInstance.destroy();
-            }
-
-            state.forecastInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Temp (\\u00b0F)',
-                        data: temps,
-                        borderColor: '#ff9d00',
-                        backgroundColor: 'rgba(255, 157, 0, 0.1)',
-                        borderWidth: 3,
-                        yAxisID: 'y',
-                        tension: 0.4,
-                        fill: true
-                    }, {
-                        label: 'Pressure (hPa)',
-                        data: pressures,
-                        borderColor: '#00d4ff',
-                        backgroundColor: 'rgba(0, 212, 255, 0.05)',
-                        borderWidth: 3,
-                        yAxisID: 'y1',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    scales: {
-                        y: {
-                            type: 'linear', display: true, position: 'left',
-                            title: { display: true, text: 'Temp (\\u00b0F)', color: '#ff9d00' },
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#ff9d00' }
-                        },
-                        y1: {
-                            type: 'linear', display: true, position: 'right', 
-                            title: { display: true, text: 'Pressure (hPa)', color: '#00d4ff' },
-                            grid: { drawOnChartArea: false },
-                            ticks: { color: '#00d4ff' }
-                        },
-                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#888' } }
-                    },
-                    plugins: {
-                        legend: { labels: { color: '#fff', font: { family: 'Rajdhani' } } }
-                    }
-                }
-            });
-        }
-
-        function renderActivityChart(dataPoints) {
-            const canvas = document.getElementById('activityChart');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-
-            if (state.activityInstance) {
-                state.activityInstance.destroy();
-            }
-
-            const labels = [];
-            const now = new Date();
-            for (let i = 0; i < 12; i++) {
-                const hour = (now.getHours() + i) % 24;
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                const hour12 = hour % 12 || 12;
-                labels.push(`${hour12} ${ampm}`);
-            }
-
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(0, 212, 255, 0.0)');
-
-            state.activityInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Activity Level',
-                        data: Array.isArray(dataPoints) ? dataPoints : [6, 8, 9, 10, 8, 7, 5, 4, 3, 4, 6, 8],
-                        borderColor: '#00d4ff',
-                        backgroundColor: gradient,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#00ff9d',
-                        pointBorderColor: '#00d4ff',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0aec0' } },
-                        y: { beginAtZero: true, max: 10, grid: { color: 'rgba(255,255,255,0.05)', drawBorder: false }, ticks: { color: '#a0aec0', stepSize: 2 } }
-                    }
-                }
-            });
-        }
-
-        function updateDashboard(data) {
-            console.log('\u1f4ca V9-DUAL-AXIS-ACTIVE Updating Dashboard:', data);
-            const rank = data.bite_rank || "Fair";
-            const prob = data.bite_probability || 50;
-            const biteElem = document.getElementById("biteProbability");
-            if (biteElem) biteElem.textContent = rank;
-            const scoreLabel = document.querySelector(".bg-blue-600 .text-xs.font-bold");
-            if (scoreLabel) scoreLabel.textContent = prob + "% Probability";
-            // 2. Update 12-hour forecast chart
-            if (data.forecast_12h) updateForecastChart(data.forecast_12h);
-            if (data.activity_levels || data.activity) renderActivityChart(data.activity_levels || data.activity);
-
-            // 3. Update weather
-            if (data.weather) {
-                updateWeatherWidget(data.weather);
-            }
-
-            // 4. Update content cards
-            if (elements.strategyContent) elements.strategyContent.innerHTML = formatContent(data.strategy);
-            if (elements.safetyContent) elements.safetyContent.innerHTML = formatContent(data.safety);
-            if (elements.intelContent) elements.intelContent.innerHTML = formatContent(data.intel);
-
-            if (data.map_url && elements.mapLink) {
-                elements.mapLink.href = data.map_url;
-            }
-
-            if (data.solunar) {
-                if (elements.moonPhase) elements.moonPhase.textContent = getMoonPhaseIcon(data.solunar.moon_phase);
-                if (elements.solunarAssessment) elements.solunarAssessment.textContent = data.solunar.assessment;
-            }
-
-            
-            }
-        }
-
-        function formatContent(content) {
-            if (!content) return '--';
-            if (typeof content === 'string') {
-                // Return textContent by default to prevent XSS
-                const div = document.createElement('div');
-                div.textContent = content;
-                return div.innerHTML
-                    .replace(/\n/g, '<br>')
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>');
-            }
-            return String(content);
-        }
-
-        function getMoonPhaseIcon(phase) {
-            const phaseLower = phase.toLowerCase();
-            if (phaseLower.includes('full')) return '\u1f315';
-            if (phaseLower.includes('new')) return '\u1f311';
-            if (phaseLower.includes('first quarter')) return '\u1f313';
-            if (phaseLower.includes('last quarter')) return '\u1f317';
-            if (phaseLower.includes('waxing crescent')) return '\u1f312';
-            if (phaseLower.includes('waxing gibbous')) return '\u1f314';
-            if (phaseLower.includes('waning crescent')) return '\u1f318';
-            if (phaseLower.includes('waning gibbous')) return '\u1f316';
-            return '\u1f319';
-        }
-
-        
-            // Generate labels for next 12 hours
-            const labels = [];
-            const now = new Date();
-            for (let i = 0; i < 12; i++) {
-                const hour = (now.getHours() + i) % 24;
-                const ampm = hour >= 12 ? 'PM' : 'AM';
-                const hour12 = hour % 12 || 12;
-                labels.push(`${hour12} ${ampm}`);
-            }
-
-            // Create gradient
-            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, 'rgba(0, 212, 255, 0.5)');
-            gradient.addColorStop(1, 'rgba(0, 212, 255, 0.0)');
-
-            state.chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Activity Level',
-                        data: Array.isArray(dataPoints) ? dataPoints : [6, 8, 9, 10, 8, 7, 5, 4, 3, 4, 6, 8],
-                        borderColor: '#00d4ff',
-                        backgroundColor: gradient,
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#00ff9d',
-                        pointBorderColor: '#00d4ff',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(10, 14, 39, 0.9)',
-                            titleColor: '#00d4ff',
-                            bodyColor: '#ffffff',
-                            borderColor: '#00d4ff',
-                            borderWidth: 1,
-                            padding: 12,
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) {
-                                    const value = context.raw;
-                                    let level = 'Low';
-                                    if (value >= 8) level = 'Excellent';
-                                    else if (value >= 6) level = 'Good';
-                                    else if (value >= 4) level = 'Moderate';
-                                    return `Activity: ${value}/10 (${level})`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#a0aec0',
-                                font: {
-                                    family: 'Rajdhani',
-                                    size: 12
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            max: 10,
-                            grid: {
-                                color: 'rgba(0, 212, 255, 0.1)',
-                                drawBorder: false
-                            },
-                            ticks: {
-                                color: '#a0aec0',
-                                stepSize: 2,
-                                font: {
-                                    family: 'Rajdhani',
-                                    size: 12
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                    }
-                }
-            });
-        }
-
-        // ============================================
-        // ERROR HANDLING
-        // ============================================
-
-        function showError(message) {
-            elements.errorText.textContent = message;
-            elements.errorMessage.classList.add('active');
-        }
-
-        function hideError() {
-            elements.errorMessage.classList.remove('active');
-        }
-
-        // ============================================
-        // START APPLICATION
-        // ============================================
-
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-
-    <script>
-        // Register Service Worker for PWA
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw_v9.js?v=99')
-                    .then(reg => console.log('\u1f680 Service Worker registered:', reg.scope))
-                    .catch(err => console.error('\\u274c Service Worker registration failed:', err));
-            });
-        }
-    </script>
+    
 
     <!-- Subscription Modal -->
     <div class="modal-overlay" id="subModal">
@@ -1942,7 +1275,245 @@
                 </ul>
             </div>
             <button class="btn btn-pro" id="subscribeBtn">Subscribe Now</button>
+            <div class="sub-plan-card" style="border-color: var(--accent-cyan);">
+                <div class="weather-label">Annual Access (Best Value)</div>
+                <div class="sub-price">$29.99</div>
+                <p style="color: var(--accent-teal); font-size: 0.8rem;">Save 50% vs Monthly</p>
+            </div>
         </div>
     </div>
+
+    <script>
+        // ============================================
+        // FISHSMART PRO - CLIENT-SIDE APPLICATION (V12-FINAL-STABLE)
+        // ============================================
+
+        const BILLING_CONFIG = {
+            sku: 'fishsmart_pro_monthly',
+            serviceUrl: 'https://play.google.com/billing'
+        };
+
+        const billingState = {
+            isPro: localStorage.getItem('fishsmart_pro_active') === 'true',
+            service: null
+        };
+
+        const state = {
+            forecastInstance: null,
+            activityInstance: null,
+            isGenerating: false
+        };
+
+        const elements = {
+            location: document.getElementById('location'),
+            species: document.getElementById('species'),
+            clarity: document.getElementById('clarity'),
+            boat: document.getElementById('boat'),
+            boatCheckbox: document.getElementById('boatCheckbox'),
+            generateBtn: document.getElementById('generateBtn'),
+            refreshBtn: document.getElementById('refreshBtn'),
+            newPlanBtnTop: document.getElementById('newPlanBtnTop'),
+            welcomeScreen: document.getElementById('welcomeScreen'),
+            loadingScreen: document.getElementById('loadingScreen'),
+            resultsDashboard: document.getElementById('resultsDashboard'),
+            errorMessage: document.getElementById('errorMessage'),
+            errorText: document.getElementById('errorText'),
+            systemTime: document.getElementById('systemTime'),
+            wttrTemp: document.getElementById('wttrTemp'),
+            wttrWind: document.getElementById('wttrWind'),
+            wttrPressure: document.getElementById('wttrPressure'),
+            wttrHumidity: document.getElementById('wttrHumidity'),
+            strategyContent: document.getElementById('strategyContent'),
+            safetyContent: document.getElementById('safetyContent'),
+            intelContent: document.getElementById('intelContent'),
+            mapLink: document.getElementById('mapLink'),
+            moonPhase: document.getElementById('moonPhase'),
+            solunarAssessment: document.getElementById('solunarAssessment'),
+            activityChart: document.getElementById('activityChart'),
+            forecastChart: document.getElementById('forecastChart'),
+            goProBtn: document.getElementById('goProBtn'),
+            subModal: document.getElementById('subModal'),
+            closeSubModal: document.getElementById('closeSubModal'),
+            subscribeBtn: document.getElementById('subscribeBtn')
+        };
+
+        async function initBilling() {
+            if (!('getDigitalGoodsService' in window)) return;
+            try {
+                billingState.service = await window.getDigitalGoodsService(BILLING_CONFIG.serviceUrl);
+                const details = await billingState.service.listPurchases();
+                for (const purchase of details) {
+                    if (purchase.itemId === BILLING_CONFIG.sku) {
+                        activateProMode();
+                        break;
+                    }
+                }
+            } catch (err) { console.error('Billing Error:', err); }
+        }
+
+        async function subscribeToPro() {
+            if (!billingState.service) {
+                alert('Subscription only available in the Android App.');
+                return;
+            }
+            try {
+                const paymentMethods = [{ supportedMethods: 'https://play.google.com/billing', data: { sku: BILLING_CONFIG.sku } }];
+                const request = new PaymentRequest(paymentMethods);
+                const response = await request.show();
+                await billingState.service.acknowledge(response.details.purchaseToken, 'repeatable');
+                await response.complete('success');
+                activateProMode();
+                elements.subModal.classList.remove('active');
+                alert('Welcome to FishSmart Pro Premium! \\u1F680');
+            } catch (err) { console.error('Sub Error:', err); }
+        }
+
+        function activateProMode() {
+            billingState.isPro = true;
+            localStorage.setItem('fishsmart_pro_active', 'true');
+            document.body.classList.add('pro-active');
+        }
+
+        function updateSystemTime() {
+            const now = new Date();
+            elements.systemTime.textContent = now.toLocaleDateString() + ' \\u2022 ' + now.toLocaleTimeString();
+        }
+
+        function setupEventListeners() {
+            elements.generateBtn.addEventListener('click', handleGenerate);
+            if (elements.refreshBtn) elements.refreshBtn.addEventListener('click', handleGenerate);
+            if (elements.newPlanBtnTop) elements.newPlanBtnTop.addEventListener('click', handleNewPlan);
+            elements.boat.addEventListener('change', () => elements.boatCheckbox.classList.toggle('checked', elements.boat.checked));
+            elements.boatCheckbox.addEventListener('click', () => {
+                elements.boat.checked = !elements.boat.checked;
+                elements.boatCheckbox.classList.toggle('checked', elements.boat.checked);
+            });
+            if (elements.goProBtn) elements.goProBtn.addEventListener('click', () => elements.subModal.classList.add('active'));
+            if (elements.closeSubModal) elements.closeSubModal.addEventListener('click', () => elements.subModal.classList.remove('active'));
+            if (elements.subscribeBtn) elements.subscribeBtn.addEventListener('click', subscribeToPro);
+        }
+
+        async function handleGenerate() {
+            if (state.isGenerating) return;
+            const selectedSpecies = elements.species.value;
+            if (selectedSpecies.includes('(Pro)') && !billingState.isPro) {
+                elements.subModal.classList.add('active');
+                return;
+            }
+            const location = elements.location.value.trim();
+            if (!location) { alert('Enter a location'); return; }
+
+            state.isGenerating = true;
+            elements.generateBtn.disabled = true;
+            elements.loadingScreen.classList.add('active');
+            elements.welcomeScreen.classList.add('hidden');
+            elements.resultsDashboard.classList.remove('active');
+
+            try {
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        location, species: selectedSpecies,
+                        clarity: elements.clarity.value, isBoat: elements.boat.checked,
+                        isPro: billingState.isPro, currentTime: new Date().toLocaleString()
+                    })
+                });
+                const data = await response.json();
+                if (!data.success) throw new Error(data.error);
+                updateDashboard(data.data);
+                elements.loadingScreen.classList.remove('active');
+                elements.resultsDashboard.classList.add('active');
+            } catch (err) { alert(err.message); } finally {
+                state.isGenerating = false;
+                elements.generateBtn.disabled = false;
+            }
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('biteProbability').textContent = data.bite_rank || 'Fair';
+            elements.wttrTemp.textContent = data.weather?.temp ? data.weather.temp + '\\u00b0F' : '--';
+            elements.wttrWind.textContent = data.weather?.wind?.speed ? data.weather.wind.speed + ' mph' : '--';
+            elements.wttrPressure.textContent = data.weather?.pressure ? data.weather.pressure + ' mb' : '--';
+            elements.wttrHumidity.textContent = data.weather?.humidity ? data.weather.humidity + '%' : '--';
+
+            if (data.forecast_12h) updateForecastChart(data.forecast_12h);
+            const activityData = data.activity_levels || data.activity;
+            if (activityData) renderActivityChart(activityData);
+
+            elements.strategyContent.innerHTML = formatContent(data.strategy);
+            elements.safetyContent.innerHTML = formatContent(data.safety);
+            elements.intelContent.innerHTML = formatContent(data.intel);
+            elements.mapLink.href = data.map_url || '#';
+
+            if (data.solunar) {
+                elements.moonPhase.textContent = getMoonPhaseIcon(data.solunar.moon_phase);
+                elements.solunarAssessment.textContent = data.solunar.assessment;
+            }
+        }
+
+        function updateForecastChart(forecast) {
+            const ctx = elements.forecastChart.getContext('2d');
+            if (state.forecastInstance) state.forecastInstance.destroy();
+            state.forecastInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: forecast.map(f => { const d = new Date(f.time); return d.getHours() % 12 || 12 + (d.getHours() >= 12 ? ' PM' : ' AM'); }),
+                    datasets: [
+                        { label: 'Temp (\\u00b0F)', data: forecast.map(f => f.temp), borderColor: '#ff9d00', backgroundColor: 'rgba(255, 157, 0, 0.1)', yAxisID: 'y', tension: 0.4, fill: true },
+                        { label: 'Pressure (hPa)', data: forecast.map(f => f.pressure), borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.05)', yAxisID: 'y1', tension: 0.4, fill: true },
+                        { label: 'Bite Prob % (PRO)', data: billingState.isPro ? forecast.map(f => f.bite_prob || 50) : [], borderColor: '#00ff9d', yAxisID: 'y2', tension: 0.4, fill: false }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', ticks: { color: '#ff9d00' } },
+                        y1: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#00d4ff' } },
+                        y2: { type: 'linear', display: billingState.isPro, position: 'right', min: 0, max: 100, grid: { drawOnChartArea: false }, ticks: { color: '#00ff9d' } }
+                    }
+                }
+            });
+        }
+
+        function renderActivityChart(dataPoints) {
+            const ctx = elements.activityChart.getContext('2d');
+            if (state.activityInstance) state.activityInstance.destroy();
+            state.activityInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['1h','2h','3h','4h','5h','6h','7h','8h','9h','10h','11h','12h'],
+                    datasets: [{ label: 'Activity', data: dataPoints, borderColor: '#00d4ff', backgroundColor: 'rgba(0, 212, 255, 0.1)', tension: 0.4, fill: true }]
+                },
+                options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true, max: 10 } } }
+            });
+        }
+
+        function formatContent(content) {
+            if (!content) return '--';
+            return String(content).replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+
+        function getMoonPhaseIcon(phase) {
+            const p = String(phase).toLowerCase();
+            if (p.includes('full')) return '\\u1F315';
+            if (p.includes('new')) return '\\u1F311';
+            return '\\u1F319';
+        }
+
+        function handleNewPlan() {
+            elements.welcomeScreen.classList.remove('hidden');
+            elements.resultsDashboard.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateSystemTime(); setInterval(updateSystemTime, 1000);
+            setupEventListeners(); initBilling();
+            if (billingState.isPro) activateProMode();
+            // Google Reviewer Bypass
+            if (new URLSearchParams(window.location.search).get('reviewer') === 'true') activateProMode();
+        });
+    </script>
 </body>
 </html>

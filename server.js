@@ -460,6 +460,28 @@ async function generateFishingStrategy(params) {
 		        let responseJson;
 		        try {
 		            responseJson = JSON.parse(rawText);
+        // --- TIERED FREEMIUM GATEKEEPING ---
+        if (!isPro) {
+            // Tier 1: The 'Wall' - Truncate tactical adjustments
+            if (responseJson.strategy && responseJson.strategy.length > 150) {
+                responseJson.strategy = responseJson.strategy.substring(0, 150) + 
+                    "... [TACTICAL ADJUSTMENT LOCKED] \uD83D\uDD12 Upgrade to Pro to see the specific tactical adjustments for this trend.";
+            }
+
+            // Tier 1: Limit Lures to 1 generic category
+            if (Array.isArray(responseJson.recommended_lures)) {
+                responseJson.recommended_lures = responseJson.recommended_lures.slice(0, 1).map(l => ({
+                    name: l.category || "Standard Lure",
+                    reason: "\uD83D\uDD12 Upgrade to Pro to see specific lure rankings and high-confidence options."
+                }));
+            }
+        } else {
+            // Tier 2: Pro - Return up to 3 specific lures with confidence rankings
+            if (Array.isArray(responseJson.recommended_lures)) {
+                responseJson.recommended_lures = responseJson.recommended_lures.slice(0, 3);
+            }
+        }
+
         // Freemium Gatekeeping
         if (!isPro) {
             // 1. Limit Lures: Only return the first category name, no specific lures/scores
